@@ -40,10 +40,12 @@ export function getDiscordGuildId(): string {
 }
 
 export function buildDiscordAuthUrl(): string {
+  const redirectUri =
+    import.meta.env.VITE_DISCORD_REDIRECT_URI || `${window.location.origin}/`
   const params = new URLSearchParams({
     client_id: getDiscordClientId(),
     response_type: 'token',
-    redirect_uri: `${window.location.origin}/`,
+    redirect_uri: redirectUri,
     scope: 'identify guilds',
     prompt: 'consent',
   })
