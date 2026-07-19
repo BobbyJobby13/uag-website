@@ -1,4 +1,4 @@
-import { DollarSign, TrendingUp, Wallet } from 'lucide-react'
+import { DollarSign, TrendingUp, Wallet } from '../icons'
 import { Panel } from '../components/Panel'
 
 const tiers = [

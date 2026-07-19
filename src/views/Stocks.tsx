@@ -1,4 +1,4 @@
-import { TrendingUp, BarChart3 } from 'lucide-react'
+import { TrendingUp, BarChart3 } from '../icons'
 import { Panel } from '../components/Panel'
 
 const exchanges = [

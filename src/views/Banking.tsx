@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Landmark, Building, ArrowRightLeft, RefreshCw } from 'lucide-react'
+import { Landmark, Building, ArrowRightLeft, RefreshCw } from '../icons'
 import { Panel } from '../components/Panel'
 
 type Bank = {

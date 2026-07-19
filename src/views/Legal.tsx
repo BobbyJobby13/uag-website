@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Scale, Briefcase, Building2, Shield } from 'lucide-react'
+import { Scale, Briefcase, Building2, Shield } from '../icons'
 import { Panel } from '../components/Panel'
 
 type Tab = 'Legal' | 'Finance' | 'Realty'

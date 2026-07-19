@@ -16,7 +16,7 @@ import {
   DollarSign,
   Users,
   MessageCircle,
-} from 'lucide-react'
+} from './icons'
 import {
   Banking,
   Capital,

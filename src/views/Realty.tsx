@@ -1,4 +1,4 @@
-import { Building2, MapPin, Home } from 'lucide-react'
+import { Building2, MapPin, Home } from '../icons'
 import { Panel } from '../components/Panel'
 
 const listings = [

@@ -1,4 +1,4 @@
-import { Users, CheckCircle, ArrowRight } from 'lucide-react'
+import { Users, CheckCircle, ArrowRight } from '../icons'
 import { Panel } from '../components/Panel'
 
 const offerings = [

@@ -1,32 +1,30 @@
-# React + TypeScript + Vite
+# UAG Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+One-stop website portal for the **Utterly Amazing Group** built with React + Vite + Tailwind CSS.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Dark dashboard overview with portfolio snapshot
+- Banking UI with instant transfers and transfer history
+- Stock exchange access (NER / TSE) with tickers and holdings
+- Legal, Finance & Realty service hub
+- Corporate Consultancy connection
+- Invest With Our Capital Fund tiers
+- Discord bot command reference and staff access levels
 
-## React Compiler
+## Scripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Discord bot commands
+
+See [docs/discord-bot.md](./docs/discord-bot.md).
+
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in secrets.

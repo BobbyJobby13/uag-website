@@ -1,4 +1,4 @@
-import { MessageCircle, Bot, Shield, Users, CheckCircle } from 'lucide-react'
+import { MessageCircle, Bot, Shield, Users, CheckCircle } from '../icons'
 import { Panel } from '../components/Panel'
 
 const commands = [
