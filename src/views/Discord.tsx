@@ -1,5 +1,8 @@
 import { MessageCircle, Bot, Shield, Users, CheckCircle } from '../icons'
 import { Panel } from '../components/Panel'
+import { DiscordProfile } from '../components/DiscordProfile'
+import { useDiscordAuth } from '../context/DiscordAuth'
+import { getDiscordGuildId, getGuildIconUrl } from '../lib/discord'
 
 const commands = [
   { command: '/transfer', description: 'Initiate an instant bank transfer' },
@@ -18,12 +21,15 @@ const roles = [
 ]
 
 export function Discord() {
+  const { user, guilds } = useDiscordAuth()
+  const uagGuild = guilds?.find((g) => g.id === getDiscordGuildId())
+
   return (
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Discord Portal</h1>
         <p className="mt-1 text-sm text-[#9ca3af]">
-          Bot-automated operations, staff commands and role-based access.
+          Login with Discord to link your UAG profile, banner, guilds and staff access.
         </p>
       </header>
 
@@ -55,23 +61,72 @@ export function Discord() {
           </a>
         </Panel>
 
-        <Panel>
-          <div className="mb-4 flex items-center gap-2">
-            <Shield size={18} className="text-blue-400" />
-            <h2 className="font-semibold text-white">Staff Access</h2>
-          </div>
-          <div className="space-y-3">
-            {roles.map((role) => (
-              <div key={role.name} className="rounded-lg bg-[#181a20] p-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-white">
-                  <Users size={14} className="text-[#9ca3af]" />
-                  {role.name}
+        <Panel className="space-y-6">
+          {user ? (
+            <div>
+              <h2 className="mb-2 font-semibold text-white">Linked Discord Profile</h2>
+              <DiscordProfile />
+            </div>
+          ) : (
+            <p className="text-sm text-[#9ca3af]">
+              Login with Discord in the sidebar to link your profile, banner and guilds.
+            </p>
+          )}
+
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <Shield size={18} className="text-blue-400" />
+              <h2 className="font-semibold text-white">Staff Access</h2>
+            </div>
+            <div className="space-y-3">
+              {roles.map((role) => (
+                <div key={role.name} className="rounded-lg bg-[#181a20] p-3">
+                  <div className="flex items-center gap-2 text-sm font-medium text-white">
+                    <Users size={14} className="text-[#9ca3af]" />
+                    {role.name}
+                  </div>
+                  <div className="mt-1 text-xs text-[#9ca3af]">{role.access}</div>
                 </div>
-                <div className="mt-1 text-xs text-[#9ca3af]">{role.access}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-xs text-emerald-400">
+
+          {guilds && (
+            <div>
+              <h2 className="mb-3 font-semibold text-white">UAG Guild Connection</h2>
+              {uagGuild ? (
+                <div className="flex items-center gap-3 rounded-lg bg-[#181a20] p-3">
+                  {getGuildIconUrl(uagGuild) ? (
+                    <img
+                      src={getGuildIconUrl(uagGuild, 64) || undefined}
+                      alt={uagGuild.name}
+                      className="h-10 w-10 rounded-lg"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2a2c35] text-sm font-bold text-white">
+                      {uagGuild.name.charAt(0)}
+                    </div>
+                  )}
+                  <div>
+                    <div className="text-sm font-medium text-white">{uagGuild.name}</div>
+                    <div className="text-xs text-emerald-400">
+                      {uagGuild.owner ? 'Owner' : 'Member'}
+                    </div>
+                  </div>
+                </div>
+              ) : user ? (
+                <div className="rounded-lg bg-[#181a20] p-3 text-sm text-[#9ca3af]">
+                  You are not in the UAG Discord server.
+                </div>
+              ) : (
+                <div className="rounded-lg bg-[#181a20] p-3 text-sm text-[#9ca3af]">
+                  Log in to check guild membership.
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 text-xs text-emerald-400">
             <CheckCircle size={14} />
             Bot integration ready
           </div>

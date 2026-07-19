@@ -17,7 +17,10 @@ import {
   Users,
   MessageCircle,
 } from './icons'
+import { DiscordProfile } from './components/DiscordProfile'
+import { DiscordAuthProvider } from './context/DiscordAuth'
 import {
+  About,
   Banking,
   Capital,
   Consultancy,
@@ -55,6 +58,7 @@ const navItems: NavItem[] = [
 
 const viewMap: Record<string, () => ReactNode> = {
   Home: Dashboard,
+  'About Us': About,
   Banking,
   'Real Estate': Realty,
   'Stock Exchanges': Stocks,
@@ -70,7 +74,8 @@ function App() {
   const View = viewMap[activeNav] ?? (() => <Placeholder title={activeNav} />)
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
+    <DiscordAuthProvider>
+      <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
       <aside className="flex w-64 flex-shrink-0 flex-col border-r border-[#1e2028] bg-[#111217]">
         <div className="p-6">
           <div className="flex items-center gap-3">
@@ -79,7 +84,7 @@ function App() {
             </div>
             <div className="text-lg font-bold tracking-tight text-white">Utterly Amazing Group</div>
           </div>
-          <div className="mt-2 text-xs font-medium text-[#6b7280]">One-Stop Portal</div>
+          <div className="mt-2 text-xs font-medium text-[#6b7280]">DemocracyCraft • UAG LLC</div>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 pb-4">
@@ -108,15 +113,7 @@ function App() {
         </nav>
 
         <div className="border-t border-[#1e2028] p-4">
-          <div className="flex items-center gap-3 rounded-lg bg-[#181a20] p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white">
-              d
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-white">dert</div>
-              <div className="text-xs text-[#6b7280]">@donutsmp123123</div>
-            </div>
-          </div>
+          <DiscordProfile compact />
         </div>
       </aside>
 
@@ -124,6 +121,7 @@ function App() {
         <View />
       </main>
     </div>
+    </DiscordAuthProvider>
   )
 }
 

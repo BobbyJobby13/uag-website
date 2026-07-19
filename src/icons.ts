@@ -15,9 +15,13 @@ import CreditCard from 'lucide-react/dist/esm/icons/credit-card.mjs'
 import DollarSign from 'lucide-react/dist/esm/icons/dollar-sign.mjs'
 import Dice5 from 'lucide-react/dist/esm/icons/dice-5.mjs'
 import Gavel from 'lucide-react/dist/esm/icons/gavel.mjs'
+import Globe from 'lucide-react/dist/esm/icons/globe.mjs'
 import Home from 'lucide-react/dist/esm/icons/home.mjs'
+import Banknote from 'lucide-react/dist/esm/icons/banknote.mjs'
 import Info from 'lucide-react/dist/esm/icons/info.mjs'
 import Landmark from 'lucide-react/dist/esm/icons/landmark.mjs'
+import LogIn from 'lucide-react/dist/esm/icons/log-in.mjs'
+import LogOut from 'lucide-react/dist/esm/icons/log-out.mjs'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin.mjs'
 import MessageCircle from 'lucide-react/dist/esm/icons/message-circle.mjs'
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw.mjs'
@@ -45,9 +49,13 @@ export {
   Dice5,
   DollarSign,
   Gavel,
+  Globe,
   Home,
   Info,
+  Banknote,
   Landmark,
+  LogIn,
+  LogOut,
   MapPin,
   MessageCircle,
   RefreshCw,
