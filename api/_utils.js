@@ -1,17 +1,17 @@
-function cors(res) {
+export function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 }
 
-function json(res, data, status = 200) {
+export function json(res, data, status = 200) {
   cors(res)
   res.statusCode = status
   res.setHeader('Content-Type', 'application/json')
   res.end(JSON.stringify(data))
 }
 
-function parseBody(req) {
+export function parseBody(req) {
   return new Promise((resolve, reject) => {
     if (req.method === 'GET' || req.method === 'HEAD') return resolve({})
     let body = ''
@@ -26,5 +26,3 @@ function parseBody(req) {
     req.on('error', reject)
   })
 }
-
-module.exports = { cors, json, parseBody }

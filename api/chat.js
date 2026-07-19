@@ -1,4 +1,4 @@
-const { json, parseBody } = require('./_utils')
+import { json, parseBody } from './_utils.js'
 
 const SYSTEM_PROMPTS = {
   accounting: `You are the UAG Accounting Assistant. Help UAG accountants with bookkeeping, ledger entries, debits and credits, balance sheets, income statements, tax planning, and financial reports. Keep answers concise and practical. You do not provide licensed financial or tax advice; suggest standard practices and draft-style outputs.`,
@@ -30,7 +30,7 @@ async function openaiReply(question, service) {
   return data.choices?.[0]?.message?.content
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.statusCode = 204
     return res.end()
