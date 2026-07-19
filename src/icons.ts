@@ -32,8 +32,10 @@ import MessageSquare from 'lucide-react/dist/esm/icons/message-square.mjs'
 import Pencil from 'lucide-react/dist/esm/icons/pencil.mjs'
 import Plus from 'lucide-react/dist/esm/icons/plus.mjs'
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2.mjs'
+import UserCog from 'lucide-react/dist/esm/icons/user-cog.mjs'
 import UserPlus from 'lucide-react/dist/esm/icons/user-plus.mjs'
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw.mjs'
+import Save from 'lucide-react/dist/esm/icons/save.mjs'
 import Scale from 'lucide-react/dist/esm/icons/scale.mjs'
 import Search from 'lucide-react/dist/esm/icons/search.mjs'
 import Send from 'lucide-react/dist/esm/icons/send.mjs'
@@ -76,6 +78,7 @@ export {
   MessageCircle,
   MessageSquare,
   RefreshCw,
+  Save,
   Scale,
   Search,
   Send,
@@ -86,6 +89,7 @@ export {
   Plus,
   Trash2,
   TrendingUp,
+  UserCog,
   UserPlus,
   Users,
   Wallet,

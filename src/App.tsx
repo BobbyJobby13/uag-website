@@ -21,8 +21,8 @@ import {
   Search,
   MessageSquare,
   Settings,
+  UserCog,
 } from './icons'
-import { Chatbot } from './components/Chatbot'
 import { DiscordProfile } from './components/DiscordProfile'
 import { DiscordAuthProvider } from './context/DiscordAuth'
 import {
@@ -39,6 +39,7 @@ import {
   Legal,
   Placeholder,
   Realty,
+  RoleManager,
   Staff,
   StaffChat,
   Stocks,
@@ -64,6 +65,7 @@ const navItems: NavItem[] = [
   { label: 'Jobs', icon: Briefcase },
   { label: 'Staff', icon: Users },
   { label: 'Staff Chat', icon: MessageSquare },
+  { label: 'Role Manager', icon: UserCog },
   { label: 'Casino', icon: Dice5 },
   { label: 'Commodities', icon: Wheat },
   { label: 'Stock Exchanges', icon: BarChart3 },
@@ -89,6 +91,7 @@ const viewMap: Record<string, () => ReactNode> = {
   Jobs,
   Staff,
   'Staff Chat': StaffChat,
+  'Role Manager': RoleManager,
   'Discord Portal': Discord,
 }
 
@@ -144,7 +147,6 @@ function App() {
       <main className="flex-1 overflow-y-auto">
         <View />
       </main>
-      <Chatbot />
     </div>
     </DiscordAuthProvider>
   )
