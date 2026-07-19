@@ -19,19 +19,25 @@ import Gavel from 'lucide-react/dist/esm/icons/gavel.mjs'
 import Globe from 'lucide-react/dist/esm/icons/globe.mjs'
 import Home from 'lucide-react/dist/esm/icons/home.mjs'
 import Banknote from 'lucide-react/dist/esm/icons/banknote.mjs'
+import Inbox from 'lucide-react/dist/esm/icons/inbox.mjs'
 import Info from 'lucide-react/dist/esm/icons/info.mjs'
+import LayoutGrid from 'lucide-react/dist/esm/icons/layout-grid.mjs'
+import List from 'lucide-react/dist/esm/icons/list.mjs'
 import Landmark from 'lucide-react/dist/esm/icons/landmark.mjs'
 import LogIn from 'lucide-react/dist/esm/icons/log-in.mjs'
 import LogOut from 'lucide-react/dist/esm/icons/log-out.mjs'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin.mjs'
 import MessageCircle from 'lucide-react/dist/esm/icons/message-circle.mjs'
+import MessageSquare from 'lucide-react/dist/esm/icons/message-square.mjs'
 import Pencil from 'lucide-react/dist/esm/icons/pencil.mjs'
 import Plus from 'lucide-react/dist/esm/icons/plus.mjs'
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2.mjs'
 import UserPlus from 'lucide-react/dist/esm/icons/user-plus.mjs'
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw.mjs'
 import Scale from 'lucide-react/dist/esm/icons/scale.mjs'
+import Search from 'lucide-react/dist/esm/icons/search.mjs'
 import Send from 'lucide-react/dist/esm/icons/send.mjs'
+import Settings from 'lucide-react/dist/esm/icons/settings.mjs'
 import Shield from 'lucide-react/dist/esm/icons/shield.mjs'
 import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag.mjs'
 import TrendingUp from 'lucide-react/dist/esm/icons/trending-up.mjs'
@@ -58,16 +64,22 @@ export {
   Gavel,
   Globe,
   Home,
+  Inbox,
   Info,
+  LayoutGrid,
   Banknote,
+  List,
   Landmark,
   LogIn,
   LogOut,
   MapPin,
   MessageCircle,
+  MessageSquare,
   RefreshCw,
   Scale,
+  Search,
   Send,
+  Settings,
   Shield,
   ShoppingBag,
   Pencil,

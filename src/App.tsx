@@ -17,21 +17,30 @@ import {
   DollarSign,
   Users,
   MessageCircle,
+  Shield,
+  Search,
+  MessageSquare,
+  Settings,
 } from './icons'
 import { Chatbot } from './components/Chatbot'
 import { DiscordProfile } from './components/DiscordProfile'
 import { DiscordAuthProvider } from './context/DiscordAuth'
 import {
   About,
+  Admin,
   Banking,
   Capital,
   Consultancy,
   Dashboard,
   Discord,
+  Investigators,
   Jobs,
+  Lawyers,
   Legal,
   Placeholder,
   Realty,
+  Staff,
+  StaffChat,
   Stocks,
 } from './views'
 
@@ -42,14 +51,19 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Home', icon: Home },
+  { label: 'Admin', icon: Shield },
   { label: 'About Us', icon: Info },
   { label: 'Banking', icon: Landmark },
   { label: 'Real Estate', icon: Building2 },
   { label: 'Accounts', icon: CreditCard },
   { label: 'Legal', icon: Gavel },
+  { label: 'Lawyers', icon: Scale },
+  { label: 'Investigators', icon: Search },
   { label: 'Construction', icon: Wrench },
-  { label: 'Escrow', icon: Scale },
+  { label: 'Escrow', icon: Settings },
   { label: 'Jobs', icon: Briefcase },
+  { label: 'Staff', icon: Users },
+  { label: 'Staff Chat', icon: MessageSquare },
   { label: 'Casino', icon: Dice5 },
   { label: 'Commodities', icon: Wheat },
   { label: 'Stock Exchanges', icon: BarChart3 },
@@ -62,14 +76,19 @@ const navItems: NavItem[] = [
 
 const viewMap: Record<string, () => ReactNode> = {
   Home: Dashboard,
+  Admin,
   'About Us': About,
   Banking,
   'Real Estate': Realty,
   'Stock Exchanges': Stocks,
   Legal,
+  Lawyers,
+  Investigators,
   'Corporate Consultancy': Consultancy,
   'Capital & Funds': Capital,
   Jobs,
+  Staff,
+  'Staff Chat': StaffChat,
   'Discord Portal': Discord,
 }
 
