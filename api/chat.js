@@ -10,14 +10,18 @@ const SYSTEM_PROMPTS = {
 const ALLOWED_SERVICES = Object.keys(SYSTEM_PROMPTS)
 
 async function openaiReply(question, service) {
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const hasKey = Boolean(process.env.OPENAI_API_KEY)
+  const baseUrl = hasKey
+    ? 'https://api.openai.com/v1'
+    : 'https://text.pollinations.ai/openai/v1'
+  const headers = { 'Content-Type': 'application/json' }
+  if (hasKey) headers.Authorization = `Bearer ${process.env.OPENAI_API_KEY}`
+
+  const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
+    headers,
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: hasKey ? 'gpt-4o-mini' : 'openai',
       messages: [
         { role: 'system', content: SYSTEM_PROMPTS[service] || SYSTEM_PROMPTS.general },
         { role: 'user', content: question },
@@ -26,7 +30,7 @@ async function openaiReply(question, service) {
     }),
   })
   const data = await res.json()
-  if (!res.ok) throw new Error(data?.error?.message || 'OpenAI error')
+  if (!res.ok) throw new Error(data?.error?.message || 'AI provider error')
   return data.choices?.[0]?.message?.content
 }
 
@@ -48,14 +52,11 @@ export default async function handler(req, res) {
     return json(res, { error: 'AI service not allowed' }, 403)
   }
 
-  if (process.env.OPENAI_API_KEY) {
-    try {
-      const answer = await openaiReply(question, service)
-      return json(res, { answer, source: 'openai', service })
-    } catch (err) {
-      return json(res, { answer: 'AI is unavailable right now. Try again later.', source: 'fallback', service, error: err.message })
-    }
+  try {
+    const answer = await openaiReply(question, service)
+    const source = process.env.OPENAI_API_KEY ? 'openai' : 'pollinations'
+    return json(res, { answer, source, service })
+  } catch (err) {
+    return json(res, { answer: 'AI is unavailable right now. Try again later.', source: 'fallback', service, error: err.message })
   }
-
-  return json(res, { answer: 'AI is not configured.', source: 'fallback', service })
 }
