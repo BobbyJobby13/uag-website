@@ -8,6 +8,7 @@ import {
   Gavel,
   Wrench,
   Briefcase,
+  Scale,
   Dice5,
   Wheat,
   BarChart3,
@@ -17,6 +18,7 @@ import {
   Users,
   MessageCircle,
 } from './icons'
+import { Chatbot } from './components/Chatbot'
 import { DiscordProfile } from './components/DiscordProfile'
 import { DiscordAuthProvider } from './context/DiscordAuth'
 import {
@@ -26,6 +28,7 @@ import {
   Consultancy,
   Dashboard,
   Discord,
+  Jobs,
   Legal,
   Placeholder,
   Realty,
@@ -45,7 +48,8 @@ const navItems: NavItem[] = [
   { label: 'Accounts', icon: CreditCard },
   { label: 'Legal', icon: Gavel },
   { label: 'Construction', icon: Wrench },
-  { label: 'Escrow', icon: Briefcase },
+  { label: 'Escrow', icon: Scale },
+  { label: 'Jobs', icon: Briefcase },
   { label: 'Casino', icon: Dice5 },
   { label: 'Commodities', icon: Wheat },
   { label: 'Stock Exchanges', icon: BarChart3 },
@@ -65,6 +69,7 @@ const viewMap: Record<string, () => ReactNode> = {
   Legal,
   'Corporate Consultancy': Consultancy,
   'Capital & Funds': Capital,
+  Jobs,
   'Discord Portal': Discord,
 }
 
@@ -120,6 +125,7 @@ function App() {
       <main className="flex-1 overflow-y-auto">
         <View />
       </main>
+      <Chatbot />
     </div>
     </DiscordAuthProvider>
   )

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown } from '../icons'
 import { Panel } from '../components/Panel'
+import { useDiscordAuth } from '../context/DiscordAuth'
 
 type OverviewCard = {
   label: string
@@ -26,6 +27,7 @@ const transactions = [
 
 export function Dashboard() {
   const [action, setAction] = useState<'deposit' | 'withdraw'>('withdraw')
+  const { userName } = useDiscordAuth()
 
   const hour = new Date().getHours()
   const greeting =
@@ -35,7 +37,7 @@ export function Dashboard() {
     <div className="mx-auto max-w-6xl p-8">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">{greeting}, dert</h1>
+          <h1 className="text-2xl font-bold text-white">{greeting}, {userName ?? 'dert'}</h1>
           <p className="mt-1 text-sm text-[#9ca3af]">
             Here's what's happening with your portfolio today.
           </p>

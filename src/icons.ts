@@ -25,8 +25,13 @@ import LogIn from 'lucide-react/dist/esm/icons/log-in.mjs'
 import LogOut from 'lucide-react/dist/esm/icons/log-out.mjs'
 import MapPin from 'lucide-react/dist/esm/icons/map-pin.mjs'
 import MessageCircle from 'lucide-react/dist/esm/icons/message-circle.mjs'
+import Pencil from 'lucide-react/dist/esm/icons/pencil.mjs'
+import Plus from 'lucide-react/dist/esm/icons/plus.mjs'
+import Trash2 from 'lucide-react/dist/esm/icons/trash-2.mjs'
+import UserPlus from 'lucide-react/dist/esm/icons/user-plus.mjs'
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw.mjs'
 import Scale from 'lucide-react/dist/esm/icons/scale.mjs'
+import Send from 'lucide-react/dist/esm/icons/send.mjs'
 import Shield from 'lucide-react/dist/esm/icons/shield.mjs'
 import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag.mjs'
 import TrendingUp from 'lucide-react/dist/esm/icons/trending-up.mjs'
@@ -62,9 +67,14 @@ export {
   MessageCircle,
   RefreshCw,
   Scale,
+  Send,
   Shield,
   ShoppingBag,
+  Pencil,
+  Plus,
+  Trash2,
   TrendingUp,
+  UserPlus,
   Users,
   Wallet,
   Wrench,

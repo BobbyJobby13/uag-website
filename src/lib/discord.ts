@@ -143,3 +143,47 @@ export function getGuildIconUrl(guild: DiscordGuild, size = 128): string | null 
 export function displayName(user: DiscordUser): string {
   return user.global_name || user.username
 }
+
+export function getAdminUsernames(): string[] {
+  const env = (import.meta.env.VITE_ADMIN_DISCORD_USERNAMES as string | undefined) || 'Brzzzes'
+  return env
+    .split(',')
+    .map((n) => n.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export function getEmployeeUsernames(): string[] {
+  const env = (import.meta.env.VITE_EMPLOYEE_DISCORD_USERNAMES as string | undefined) || ''
+  return env
+    .split(',')
+    .map((n) => n.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export function isAdminUser(
+  user: DiscordUser | null,
+  guilds: DiscordGuild[] | null,
+  guildId = getDiscordGuildId()
+): boolean {
+  if (!user) return false
+  const names = getAdminUsernames()
+  if (names.includes(user.username.toLowerCase())) return true
+  if (user.global_name && names.includes(user.global_name.toLowerCase())) return true
+  const guild = guilds?.find((g) => g.id === guildId)
+  if (guild?.owner) return true
+  return false
+}
+
+export function isEmployeeUser(user: DiscordUser | null): boolean {
+  if (!user) return false
+  const names = getEmployeeUsernames()
+  return names.includes(user.username.toLowerCase()) || (user.global_name ? names.includes(user.global_name.toLowerCase()) : false)
+}
+
+export function canEditRealty(user: DiscordUser | null, guilds: DiscordGuild[] | null): boolean {
+  return isAdminUser(user, guilds)
+}
+
+export function canPostJobs(user: DiscordUser | null, guilds: DiscordGuild[] | null): boolean {
+  return isAdminUser(user, guilds) || isEmployeeUser(user)
+}

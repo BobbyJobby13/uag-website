@@ -8,10 +8,13 @@ import {
 } from 'react'
 import {
   buildDiscordAuthUrl,
+  canEditRealty,
+  canPostJobs,
   displayName,
   fetchDiscordGuilds,
   fetchDiscordUser,
   getStoredDiscordAuth,
+  isAdminUser,
   parseDiscordAuthHash,
   setStoredDiscordAuth,
   type DiscordGuild,
@@ -26,6 +29,9 @@ interface DiscordAuthState {
   login: () => void
   logout: () => void
   userName: string | null
+  isAdmin: boolean
+  canEditRealty: boolean
+  canPostJobs: boolean
 }
 
 const DiscordAuthContext = createContext<DiscordAuthState | null>(null)
@@ -82,9 +88,14 @@ export function DiscordAuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const userName = user ? displayName(user) : null
+  const isAdmin = isAdminUser(user, guilds)
+  const canEdit = canEditRealty(user, guilds)
+  const canPost = canPostJobs(user, guilds)
 
   return (
-    <DiscordAuthContext.Provider value={{ user, guilds, loading, error, login, logout, userName }}>
+    <DiscordAuthContext.Provider
+      value={{ user, guilds, loading, error, login, logout, userName, isAdmin, canEditRealty: canEdit, canPostJobs: canPost }}
+    >
       {children}
     </DiscordAuthContext.Provider>
   )
