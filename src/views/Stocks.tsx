@@ -1,9 +1,9 @@
-import { TrendingUp, BarChart3 } from '../icons'
+import { TrendingUp, BarChart3, ExternalLink } from '../icons'
 import { Panel } from '../components/Panel'
 
 const exchanges = [
-  { name: 'NER', fullName: 'New Economic Reserve', region: 'North America', status: 'Live' },
-  { name: 'TSE', fullName: 'Transatlantic Stock Exchange', region: 'Europe / Asia', status: 'Live' },
+  { name: 'NER', fullName: 'New Economic Reserve', region: 'North America', status: 'Live', url: '' },
+  { name: 'TSE', fullName: 'Transatlantic Stock Exchange', region: 'Europe / Asia', status: 'Live', url: 'https://market.installe.us/login' },
 ]
 
 const tickers = [
@@ -59,9 +59,21 @@ export function Stocks() {
                   <div className="text-sm font-medium text-white">{ex.name}</div>
                   <div className="text-xs text-[#6b7280]">{ex.fullName}</div>
                 </div>
-                <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
-                  {ex.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  {ex.url ? (
+                    <a
+                      href={ex.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 rounded-md bg-[#2a2c35] px-2 py-1 text-xs font-medium text-blue-400 transition hover:bg-[#3a3c45]"
+                    >
+                      Open <ExternalLink size={12} />
+                    </a>
+                  ) : null}
+                  <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
+                    {ex.status}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

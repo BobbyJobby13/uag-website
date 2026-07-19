@@ -14,6 +14,7 @@ import Code from 'lucide-react/dist/esm/icons/code.mjs'
 import CreditCard from 'lucide-react/dist/esm/icons/credit-card.mjs'
 import DollarSign from 'lucide-react/dist/esm/icons/dollar-sign.mjs'
 import Dice5 from 'lucide-react/dist/esm/icons/dice-5.mjs'
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link.mjs'
 import Gavel from 'lucide-react/dist/esm/icons/gavel.mjs'
 import Globe from 'lucide-react/dist/esm/icons/globe.mjs'
 import Home from 'lucide-react/dist/esm/icons/home.mjs'
@@ -48,6 +49,7 @@ export {
   CreditCard,
   Dice5,
   DollarSign,
+  ExternalLink,
   Gavel,
   Globe,
   Home,
