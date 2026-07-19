@@ -19,6 +19,7 @@ import Gavel from 'lucide-react/dist/esm/icons/gavel.mjs'
 import Globe from 'lucide-react/dist/esm/icons/globe.mjs'
 import Home from 'lucide-react/dist/esm/icons/home.mjs'
 import Banknote from 'lucide-react/dist/esm/icons/banknote.mjs'
+import BookOpen from 'lucide-react/dist/esm/icons/book-open.mjs'
 import Inbox from 'lucide-react/dist/esm/icons/inbox.mjs'
 import Info from 'lucide-react/dist/esm/icons/info.mjs'
 import LayoutGrid from 'lucide-react/dist/esm/icons/layout-grid.mjs'
@@ -70,6 +71,7 @@ export {
   Info,
   LayoutGrid,
   Banknote,
+  BookOpen,
   List,
   Landmark,
   LogIn,

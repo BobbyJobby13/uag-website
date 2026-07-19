@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, Send, Users } from '../icons'
 import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
-import { addChatMessage, getChatMessages, type ChatMessage } from '../lib/data'
+import { addChatMessage, getChatMessages, isStaff, type ChatMessage } from '../lib/data'
 
 export function StaffChat() {
-  const { userName } = useDiscordAuth()
+  const { userName, isAdmin } = useDiscordAuth()
+  const allowed = isAdmin || isStaff(userName)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -27,6 +28,17 @@ export function StaffChat() {
     addChatMessage({ author, text })
     setMessages(getChatMessages())
     setInput('')
+  }
+
+  if (!allowed) {
+    return (
+      <div className="mx-auto max-w-4xl p-8">
+        <Panel>
+          <h1 className="text-xl font-bold text-white">Access Denied</h1>
+          <p className="mt-2 text-sm text-[#9ca3af]">Staff Chat is for UAG staff only.</p>
+        </Panel>
+      </div>
+    )
   }
 
   return (

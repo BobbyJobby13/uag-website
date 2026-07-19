@@ -64,6 +64,7 @@ export interface ServiceRequest {
   assignedTo?: string
   createdAt: string
   notes?: string
+  caseFile?: string
 }
 
 export interface Task {
@@ -81,6 +82,23 @@ export interface ChatMessage {
   author: string
   department?: Department
   text: string
+  createdAt: string
+}
+
+export interface LedgerEntry {
+  id: string
+  date: string
+  description: string
+  category: string
+  type: 'income' | 'expense'
+  amount: number
+  createdAt: string
+}
+
+export interface AccountBook {
+  id: string
+  name: string
+  entries: LedgerEntry[]
   createdAt: string
 }
 
@@ -112,6 +130,7 @@ const KEYS = {
   requests: 'uag_service_requests',
   tasks: 'uag_tasks',
   chat: 'uag_staff_chat',
+  accountingBooks: 'uag_accounting_books',
 }
 
 const defaultTasks: Task[] = [
@@ -231,4 +250,75 @@ export function addChatMessage(message: Omit<ChatMessage, 'id' | 'createdAt'>): 
 
 export function rolesForDepartment(department: Department): string[] {
   return DEPARTMENTS.find((d) => d.id === department)?.roles ?? []
+}
+
+export function getEmployeeByName(name: string | null | undefined): Employee | undefined {
+  if (!name) return undefined
+  const target = name.toLowerCase().trim()
+  return getEmployees().find(
+    (e) =>
+      e.name.toLowerCase() === target ||
+      (e.discordUsername && e.discordUsername.toLowerCase() === target)
+  )
+}
+
+export function hasDepartment(
+  name: string | null | undefined,
+  department: Department
+): boolean {
+  const emp = getEmployeeByName(name)
+  return emp ? emp.department === department : false
+}
+
+export function isStaff(name: string | null | undefined): boolean {
+  return !!getEmployeeByName(name)
+}
+
+export function getAccountBooks(): AccountBook[] {
+  return getJSON<AccountBook[]>(KEYS.accountingBooks, [])
+}
+
+export function setAccountBooks(books: AccountBook[]) {
+  setJSON(KEYS.accountingBooks, books)
+}
+
+export function addAccountBook(name: string): AccountBook {
+  const book: AccountBook = { id: uid(), name: name.trim(), entries: [], createdAt: new Date().toISOString() }
+  const list = [...getAccountBooks(), book]
+  setAccountBooks(list)
+  return book
+}
+
+export function updateAccountBook(id: string, partial: Partial<AccountBook>) {
+  const list = getAccountBooks().map((b) => (b.id === id ? { ...b, ...partial } : b))
+  setAccountBooks(list)
+}
+
+export function removeAccountBook(id: string) {
+  setAccountBooks(getAccountBooks().filter((b) => b.id !== id))
+}
+
+export function addLedgerEntry(bookId: string, entry: Omit<LedgerEntry, 'id' | 'createdAt'>): LedgerEntry {
+  const item: LedgerEntry = { ...entry, id: uid(), createdAt: new Date().toISOString() }
+  const list = getAccountBooks().map((b) =>
+    b.id === bookId ? { ...b, entries: [...b.entries, item] } : b
+  )
+  setAccountBooks(list)
+  return item
+}
+
+export function updateLedgerEntry(bookId: string, entryId: string, partial: Partial<LedgerEntry>) {
+  const list = getAccountBooks().map((b) =>
+    b.id === bookId
+      ? { ...b, entries: b.entries.map((e) => (e.id === entryId ? { ...e, ...partial } : e)) }
+      : b
+  )
+  setAccountBooks(list)
+}
+
+export function removeLedgerEntry(bookId: string, entryId: string) {
+  const list = getAccountBooks().map((b) =>
+    b.id === bookId ? { ...b, entries: b.entries.filter((e) => e.id !== entryId) } : b
+  )
+  setAccountBooks(list)
 }

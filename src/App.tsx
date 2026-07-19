@@ -22,11 +22,13 @@ import {
   MessageSquare,
   Settings,
   UserCog,
+  Banknote,
 } from './icons'
 import { DiscordProfile } from './components/DiscordProfile'
 import { DiscordAuthProvider } from './context/DiscordAuth'
 import {
   About,
+  Accounting,
   Admin,
   Banking,
   Capital,
@@ -58,6 +60,7 @@ const navItems: NavItem[] = [
   { label: 'Real Estate', icon: Building2 },
   { label: 'Accounts', icon: CreditCard },
   { label: 'Legal', icon: Gavel },
+  { label: 'Accounting', icon: Banknote },
   { label: 'Lawyers', icon: Scale },
   { label: 'Investigators', icon: Search },
   { label: 'Construction', icon: Wrench },
@@ -84,6 +87,7 @@ const viewMap: Record<string, () => ReactNode> = {
   'Real Estate': Realty,
   'Stock Exchanges': Stocks,
   Legal,
+  Accounting,
   Lawyers,
   Investigators,
   'Corporate Consultancy': Consultancy,
