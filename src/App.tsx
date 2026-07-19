@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react'
+import { useState, type ComponentType, type ReactNode } from 'react'
 import {
   Home,
   Info,
@@ -14,8 +14,20 @@ import {
   ShoppingBag,
   Code,
   DollarSign,
-  ChevronDown,
+  Users,
+  MessageCircle,
 } from 'lucide-react'
+import {
+  Banking,
+  Capital,
+  Consultancy,
+  Dashboard,
+  Discord,
+  Legal,
+  Placeholder,
+  Realty,
+  Stocks,
+} from './views'
 
 type NavItem = {
   label: string
@@ -36,41 +48,38 @@ const navItems: NavItem[] = [
   { label: 'Stock Exchanges', icon: BarChart3 },
   { label: 'DC Store', icon: ShoppingBag },
   { label: 'Dev Services', icon: Code },
+  { label: 'Corporate Consultancy', icon: Users },
   { label: 'Capital & Funds', icon: DollarSign },
+  { label: 'Discord Portal', icon: MessageCircle },
 ]
 
-type OverviewCard = {
-  label: string
-  value: string
-  change: string
-  positive: boolean
+const viewMap: Record<string, () => ReactNode> = {
+  Home: Dashboard,
+  Banking,
+  'Real Estate': Realty,
+  'Stock Exchanges': Stocks,
+  Legal,
+  'Corporate Consultancy': Consultancy,
+  'Capital & Funds': Capital,
+  'Discord Portal': Discord,
 }
-
-const overview: OverviewCard[] = [
-  { label: 'Portfolio value', value: '$0.00', change: '+0.0%', positive: true },
-  { label: 'Total balance', value: '$0.00', change: '+0.0%', positive: true },
-  { label: 'Total spent', value: '$0.00', change: '-0.0%', positive: false },
-]
-
-const assets = [
-  { name: 'Primary Residence', category: 'Real Estate', value: '$0.00', change: '+0.0%' },
-  { name: 'Investment Portfolio', category: 'Stocks & Funds', value: '$0.00', change: '+0.0%' },
-]
-
-const transactions = [
-  { date: 'May 5, 2026', description: 'Example', status: 'Completed', amount: '+$0.00' },
-]
 
 function App() {
   const [activeNav, setActiveNav] = useState('Home')
-  const [action, setAction] = useState<'deposit' | 'withdraw'>('withdraw')
+
+  const View = viewMap[activeNav] ?? (() => <Placeholder title={activeNav} />)
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
       <aside className="flex w-64 flex-shrink-0 flex-col border-r border-[#1e2028] bg-[#111217]">
         <div className="p-6">
-          <div className="text-lg font-bold tracking-tight text-white">Utterly Amazing Group</div>
-          <div className="mt-1 text-xs font-medium text-[#6b7280]">Dashboard</div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-sm">
+              U
+            </div>
+            <div className="text-lg font-bold tracking-tight text-white">Utterly Amazing Group</div>
+          </div>
+          <div className="mt-2 text-xs font-medium text-[#6b7280]">One-Stop Portal</div>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 pb-4">
@@ -112,127 +121,7 @@ function App() {
       </aside>
 
       <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-6xl p-8">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white">Good morning, dert</h1>
-              <p className="mt-1 text-sm text-[#9ca3af]">Here's what's happening with your portfolio today.</p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setAction('deposit')}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  action === 'deposit'
-                    ? 'bg-[#3b82f6] text-white shadow'
-                    : 'bg-[#181a20] text-[#9ca3af] hover:text-white'
-                }`}
-              >
-                Deposit
-              </button>
-              <button
-                type="button"
-                onClick={() => setAction('withdraw')}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  action === 'withdraw'
-                    ? 'bg-[#3b82f6] text-white shadow'
-                    : 'bg-[#181a20] text-[#9ca3af] hover:text-white'
-                }`}
-              >
-                Withdraw
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-2 rounded-lg bg-[#181a20] px-3 py-2 text-sm font-medium text-[#9ca3af] transition hover:text-white"
-              >
-                Last month
-                <ChevronDown size={14} />
-              </button>
-            </div>
-          </div>
-
-          <section className="mb-8">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[#6b7280]">
-              Overview
-            </h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {overview.map((card) => (
-                <div
-                  key={card.label}
-                  className="rounded-xl border border-[#1e2028] bg-[#15161b] p-5 transition hover:border-[#2a2d37]"
-                >
-                  <p className="text-xs text-[#9ca3af]">{card.label}</p>
-                  <div className="mt-1 text-2xl font-semibold text-white">{card.value}</div>
-                  <div
-                    className={`mt-1 text-xs font-medium ${
-                      card.positive ? 'text-emerald-400' : 'text-rose-400'
-                    }`}
-                  >
-                    {card.change} from last month
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="mb-4 text-lg font-semibold text-white">Assets</h2>
-            <div className="overflow-hidden rounded-xl border border-[#1e2028]">
-              <table className="w-full text-sm">
-                <thead className="bg-[#15161b] text-[#9ca3af]">
-                  <tr>
-                    <th className="px-5 py-3 text-left font-medium">Asset</th>
-                    <th className="px-5 py-3 text-left font-medium">Category</th>
-                    <th className="px-5 py-3 text-left font-medium">Value</th>
-                    <th className="px-5 py-3 text-left font-medium">Change</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1e2028] bg-[#111217]">
-                  {assets.map((asset) => (
-                    <tr key={asset.name} className="transition hover:bg-[#181a20]">
-                      <td className="px-5 py-4 font-medium text-white">{asset.name}</td>
-                      <td className="px-5 py-4 text-[#9ca3af]">{asset.category}</td>
-                      <td className="px-5 py-4 text-white">{asset.value}</td>
-                      <td className="px-5 py-4 text-emerald-400">{asset.change}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-4 text-lg font-semibold text-white">Recent transactions</h2>
-            <div className="overflow-hidden rounded-xl border border-[#1e2028]">
-              <table className="w-full text-sm">
-                <thead className="bg-[#15161b] text-[#9ca3af]">
-                  <tr>
-                    <th className="px-5 py-3 text-left font-medium">Date</th>
-                    <th className="px-5 py-3 text-left font-medium">Description</th>
-                    <th className="px-5 py-3 text-left font-medium">Status</th>
-                    <th className="px-5 py-3 text-left font-medium">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1e2028] bg-[#111217]">
-                  {transactions.map((tx) => (
-                    <tr key={`${tx.date}-${tx.description}`} className="transition hover:bg-[#181a20]">
-                      <td className="px-5 py-4 text-[#9ca3af]">{tx.date}</td>
-                      <td className="px-5 py-4 text-white">{tx.description}</td>
-                      <td className="px-5 py-4">
-                        <span className="inline-flex items-center gap-1.5 text-emerald-400">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                          {tx.status}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-white">{tx.amount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
+        <View />
       </main>
     </div>
   )
