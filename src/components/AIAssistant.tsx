@@ -3,7 +3,8 @@ import { Bot, Send } from '../icons'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import { hasDepartment, type Department } from '../lib/data'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
+const apiBase = import.meta.env.VITE_API_BASE_URL
+const API_BASE = (typeof apiBase === 'string' && apiBase.startsWith('/')) ? apiBase : '/api'
 
 type Message = {
   role: 'user' | 'assistant'
