@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Bot, Send } from '../icons'
+import { Bot, Copy, ExternalLink, FileText, Send } from '../icons'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import { hasDepartment, type Department } from '../lib/data'
 
@@ -31,6 +31,7 @@ export function AIAssistant({
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [copiedId, setCopiedId] = useState<number | null>(null)
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -70,6 +71,32 @@ export function AIAssistant({
     }
   }
 
+  const exportReportAsPDF = async (text: string) => {
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF()
+    const title = 'UAG Accounting Report'
+    doc.setFontSize(18)
+    doc.text(title, 14, 20)
+    doc.setFontSize(10)
+    doc.setTextColor(100)
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 28)
+    doc.setTextColor(0)
+    doc.setFontSize(11)
+    doc.text(text, 14, 40, { maxWidth: 180, lineHeightFactor: 1.5 })
+    doc.save('uag-accounting-report.pdf')
+  }
+
+  const openInGoogleDocs = async (text: string, id: number) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch {
+      // ignore clipboard errors
+    }
+    window.open('https://docs.google.com/document/create', '_blank')
+  }
+
   return (
     <div className="mt-6">
       <button
@@ -90,15 +117,50 @@ export function AIAssistant({
 
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.map((m, i) => (
-              <div
-                key={i}
-                className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
-                  m.role === 'user'
-                    ? 'ml-auto bg-indigo-600 text-white'
-                    : 'bg-[#111827] text-[#9aa3b8]'
-                }`}
-              >
-                {m.text}
+              <div key={i}>
+                <div
+                  className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+                    m.role === 'user'
+                      ? 'ml-auto bg-indigo-600 text-white'
+                      : 'bg-[#111827] text-[#9aa3b8]'
+                  }`}
+                >
+                  {m.text}
+                </div>
+                {m.role === 'assistant' && service === 'accounting' && i > 0 && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => exportReportAsPDF(m.text)}
+                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-indigo-500/10 hover:text-indigo-400"
+                    >
+                      <FileText size={12} />
+                      PDF
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openInGoogleDocs(m.text, i)}
+                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                    >
+                      <ExternalLink size={12} />
+                      Google Doc
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(m.text)
+                          setCopiedId(i)
+                          setTimeout(() => setCopiedId(null), 2000)
+                        } catch {}
+                      }}
+                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-[#2a344e] hover:text-white"
+                    >
+                      <Copy size={12} />
+                      {copiedId === i ? 'Copied' : 'Copy'}
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             {loading && (
