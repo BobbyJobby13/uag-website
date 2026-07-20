@@ -6,27 +6,32 @@ function badRequest(res, message) {
 }
 
 export default async function handler(req, res) {
-  if (req.method === 'OPTIONS') {
-    cors(res)
-    return res.end()
+  try {
+    if (req.method === 'OPTIONS') {
+      cors(res)
+      return res.end()
+    }
+
+    const { bookId } = req.query
+    if (!bookId) return badRequest(res, 'bookId required')
+
+    if (!kvEnabled()) {
+      return json(res, { error: 'Server storage is not configured. Set KV_REST_API_URL and KV_REST_API_TOKEN.' }, 503)
+    }
+
+    if (req.method === 'POST') {
+      return await receiveWebhook(req, res, bookId)
+    }
+
+    if (req.method === 'GET') {
+      return await listTransactions(req, res, bookId)
+    }
+
+    return json(res, { error: 'Method not allowed' }, 405)
+  } catch (err) {
+    console.error('webhook handler error', err)
+    return json(res, { error: 'Webhook handler failed', detail: err.message }, 500)
   }
-
-  const { bookId } = req.query
-  if (!bookId) return badRequest(res, 'bookId required')
-
-  if (!kvEnabled()) {
-    return json(res, { error: 'Server storage is not configured. Set KV_REST_API_URL and KV_REST_API_TOKEN.' }, 503)
-  }
-
-  if (req.method === 'POST') {
-    return receiveWebhook(req, res, bookId)
-  }
-
-  if (req.method === 'GET') {
-    return listTransactions(req, res, bookId)
-  }
-
-  return json(res, { error: 'Method not allowed' }, 405)
 }
 
 async function receiveWebhook(req, res, bookId) {
