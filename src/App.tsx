@@ -128,15 +128,13 @@ function AppContent() {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
 
         <div className="border-b border-[#1c2335] p-6">
-          <div className="rounded-xl border border-[#1c2335] bg-[#0b0f19]/80 p-3">
+          <div className="flex items-center gap-3">
             <img
-              src="/logo.png"
+              src="/logo-sm.png"
               alt="Utterly Amazing Group"
-              className="h-8 w-auto object-contain"
+              className="h-10 w-auto object-contain drop-shadow-lg"
             />
-          </div>
-          <div className="mt-3 text-xs font-semibold tracking-wide text-[#5d6a87] uppercase">
-            UAG Portal
+            <span className="text-sm font-bold tracking-tight text-white">UAG Portal</span>
           </div>
         </div>
 
