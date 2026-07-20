@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Bot, Gavel, Plus, Trash2, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
+import { Attachments } from '../components/Attachments'
 import { Panel } from '../components/Panel'
 import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
@@ -11,6 +12,7 @@ import {
   hasDepartment,
   removeRequest,
   updateRequest,
+  type Attachment,
   type Employee,
   type ServiceRequest,
 } from '../lib/data'
@@ -58,6 +60,11 @@ export function Lawyers() {
 
   const updateNotes = (req: ServiceRequest, notes: string) => {
     updateRequest(req.id, { notes })
+    refresh()
+  }
+
+  const updateAttachments = (req: ServiceRequest, attachments: Attachment[]) => {
+    updateRequest(req.id, { attachments })
     refresh()
   }
 
@@ -214,6 +221,10 @@ export function Lawyers() {
                 placeholder="Case notes..."
                 rows={2}
                 className="mt-3 w-full rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-xs text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+              />
+              <Attachments
+                attachments={req.attachments || []}
+                onChange={(next) => updateAttachments(req, next)}
               />
               {req.caseFile && (
                 <div className="mt-3 rounded-lg bg-[#111827] p-3">

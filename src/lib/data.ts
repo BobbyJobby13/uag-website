@@ -61,6 +61,15 @@ export interface Employee {
   notes?: string
 }
 
+export interface Attachment {
+  id: string
+  name: string
+  type: string
+  size: number
+  data: string
+  createdAt: string
+}
+
 export interface ServiceRequest {
   id: string
   clientName: string
@@ -72,6 +81,7 @@ export interface ServiceRequest {
   createdAt: string
   notes?: string
   caseFile?: string
+  attachments?: Attachment[]
 }
 
 export interface Task {

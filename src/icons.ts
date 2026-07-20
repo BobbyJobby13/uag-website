@@ -28,6 +28,7 @@ import Inbox from 'lucide-react/dist/esm/icons/inbox.mjs'
 import Info from 'lucide-react/dist/esm/icons/info.mjs'
 import LayoutGrid from 'lucide-react/dist/esm/icons/layout-grid.mjs'
 import List from 'lucide-react/dist/esm/icons/list.mjs'
+import Paperclip from 'lucide-react/dist/esm/icons/paperclip.mjs'
 import Landmark from 'lucide-react/dist/esm/icons/landmark.mjs'
 import LogIn from 'lucide-react/dist/esm/icons/log-in.mjs'
 import LogOut from 'lucide-react/dist/esm/icons/log-out.mjs'
@@ -83,6 +84,7 @@ export {
   Banknote,
   BookOpen,
   List,
+  Paperclip,
   Landmark,
   LogIn,
   LogOut,
