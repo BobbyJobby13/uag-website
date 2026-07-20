@@ -12,6 +12,7 @@ import {
   rolesForDepartment,
   setRequests,
   setTasks,
+  isStaff,
   type Department,
   type Employee,
   type ServiceRequest,
@@ -24,7 +25,8 @@ import { Plus, Trash2, Users, Shield, List, Inbox, LayoutGrid } from '../icons'
 type Tab = 'overview' | 'employees' | 'tasks' | 'requests' | 'content'
 
 export function Admin() {
-  const { isAdmin } = useDiscordAuth()
+  const { isAdmin, userName } = useDiscordAuth()
+  const allowed = isAdmin || isStaff(userName)
   const [tab, setTab] = useState<Tab>('overview')
   const [employees, setEmployeesState] = useState<Employee[]>([])
   const [tasks, setTasksState] = useState<Task[]>([])
@@ -116,13 +118,13 @@ export function Admin() {
     count: employees.filter((e) => e.department === d.id).length,
   }))
 
-  if (!isAdmin) {
+  if (!allowed) {
     return (
       <div className="mx-auto max-w-6xl p-8">
         <Panel>
           <h1 className="text-xl font-bold text-white">Admin Control Center</h1>
           <p className="mt-2 text-sm text-[#9ca3af]">
-            You do not have admin access. Log in with an admin Discord account.
+            You do not have access to this page. Log in with a staff or admin Discord account.
           </p>
         </Panel>
       </div>

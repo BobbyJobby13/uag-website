@@ -25,7 +25,8 @@ import {
   Banknote,
 } from './icons'
 import { DiscordProfile } from './components/DiscordProfile'
-import { DiscordAuthProvider } from './context/DiscordAuth'
+import { DiscordAuthProvider, useDiscordAuth } from './context/DiscordAuth'
+import { isStaff } from './lib/data'
 import {
   About,
   Accounting,
@@ -99,14 +100,19 @@ const viewMap: Record<string, () => ReactNode> = {
   'Discord Portal': Discord,
 }
 
-function App() {
+function AppContent() {
   const [activeNav, setActiveNav] = useState('Home')
+  const { userName, isAdmin } = useDiscordAuth()
+  const canViewAdmin = isAdmin || isStaff(userName)
+
+  const visibleNavItems = navItems.filter(
+    (item) => item.label !== 'Admin' || canViewAdmin
+  )
 
   const View = viewMap[activeNav] ?? (() => <Placeholder title={activeNav} />)
 
   return (
-    <DiscordAuthProvider>
-      <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
+    <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
       <aside className="flex w-64 flex-shrink-0 flex-col border-r border-[#1e2028] bg-[#111217]">
         <div className="p-6">
           <div className="flex items-center gap-3">
@@ -120,7 +126,7 @@ function App() {
 
         <nav className="flex-1 overflow-y-auto px-3 pb-4">
           <ul className="space-y-1">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon
               const active = activeNav === item.label
               return (
@@ -152,6 +158,13 @@ function App() {
         <View />
       </main>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <DiscordAuthProvider>
+      <AppContent />
     </DiscordAuthProvider>
   )
 }
