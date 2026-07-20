@@ -88,7 +88,7 @@ export function Home() {
               </button>
             ) : (
               <a
-                href="https://discord.gg/uag"
+                href="https://discord.gg/4uaq7tWBSY"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 rounded-xl border border-[#2a344e] bg-[#0b0f19]/80 px-6 py-3 text-sm font-semibold text-[#e8eaf2] backdrop-blur-md transition hover:border-indigo-500/50 hover:bg-[#111827]"
