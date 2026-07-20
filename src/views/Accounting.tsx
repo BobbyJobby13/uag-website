@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Banknote, BookOpen, Plus, Trash2, TrendingUp, UserPlus, Users } from '../icons'
+import { Banknote, BookOpen, Download, FileSpreadsheet, FileText, Plus, Trash2, TrendingUp, UserPlus, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
@@ -125,6 +125,70 @@ export function Accounting() {
     if (!selectedBook || !canEditBook(selectedBook)) return
     removeLedgerEntry(selectedBook.id, entryId)
     refreshBooks()
+  }
+
+  const downloadFile = (content: string | Blob, filename: string, type: string) => {
+    const blob = content instanceof Blob ? content : new Blob([content], { type })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  const exportBookAsCSV = (book: AccountBook) => {
+    const headers = ['Date', 'Description', 'Category', 'Type', 'Amount']
+    const rows = book.entries.map((e) => [e.date, e.description, e.category || '-', e.type, String(e.amount)])
+    const escape = (v: string) => {
+      const s = v.replace(/"/g, '""')
+      if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s}"`
+      return s
+    }
+    const csv = [headers.join(','), ...rows.map((r) => r.map(escape).join(','))].join('\n')
+    const filename = `${book.name.replace(/\s+/g, '_').replace(/[^a-z0-9_\-]/gi, '')}_ledger.csv`
+    downloadFile('\uFEFF' + csv, filename, 'text/csv;charset=utf-8;')
+  }
+
+  const exportBookAsPDF = async (book: AccountBook) => {
+    const [{ jsPDF }, { autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ])
+    const doc = new jsPDF()
+    const balance = book.entries.reduce((acc, e) => (e.type === 'income' ? acc + e.amount : acc - e.amount), 0)
+    const income = book.entries.reduce((acc, e) => (e.type === 'income' ? acc + e.amount : acc), 0)
+    const expenses = book.entries.reduce((acc, e) => (e.type === 'expense' ? acc + e.amount : acc), 0)
+
+    doc.setFontSize(18)
+    doc.text(book.name, 14, 20)
+    doc.setFontSize(10)
+    doc.setTextColor(100)
+    doc.text(`Owner: ${book.owner || 'Unknown'}`, 14, 28)
+    doc.text(`Total income: ${income.toLocaleString()} DC`, 14, 34)
+    doc.text(`Total expenses: ${expenses.toLocaleString()} DC`, 14, 40)
+    doc.text(`Net balance: ${balance.toLocaleString()} DC`, 14, 46)
+
+    autoTable(doc, {
+      startY: 54,
+      head: [['Date', 'Description', 'Category', 'Type', 'Amount (DC)']],
+      body: book.entries.map((e) => [e.date, e.description, e.category || '-', e.type, e.amount.toLocaleString()]),
+      styles: { fontSize: 10, textColor: 40 },
+      headStyles: { fillColor: [99, 102, 241], textColor: 255 },
+      alternateRowStyles: { fillColor: [248, 248, 248] },
+      margin: { left: 14, right: 14 },
+    })
+
+    const filename = `${book.name.replace(/\s+/g, '_').replace(/[^a-z0-9_\-]/gi, '')}_ledger.pdf`
+    doc.save(filename)
+  }
+
+  const exportBookAsJSON = (book: AccountBook) => {
+    const data = JSON.stringify(book, null, 2)
+    const filename = `${book.name.replace(/\s+/g, '_').replace(/[^a-z0-9_\-]/gi, '')}_ledger.json`
+    downloadFile(data, filename, 'application/json')
   }
 
   const inputClass =
@@ -346,6 +410,35 @@ export function Accounting() {
               </select>
             </div>
 
+            {selectedBook && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => exportBookAsCSV(selectedBook)}
+                  className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                >
+                  <FileSpreadsheet size={14} />
+                  Export CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportBookAsPDF(selectedBook)}
+                  className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                >
+                  <FileText size={14} />
+                  Export PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportBookAsJSON(selectedBook)}
+                  className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                >
+                  <Download size={14} />
+                  Export JSON
+                </button>
+              </div>
+            )}
+
             {selectedBook && canEditBook(selectedBook) ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
                 <input
@@ -462,6 +555,40 @@ export function Accounting() {
 
       {activeTab === 'reports' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {selectedBook && (
+            <Panel className="sm:col-span-2 lg:col-span-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold text-[#e8eaf2]">Export {selectedBook.name}</h3>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => exportBookAsCSV(selectedBook)}
+                    className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                  >
+                    <FileSpreadsheet size={14} />
+                    Export CSV
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => exportBookAsPDF(selectedBook)}
+                    className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                  >
+                    <FileText size={14} />
+                    Export PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => exportBookAsJSON(selectedBook)}
+                    className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                  >
+                    <Download size={14} />
+                    Export JSON
+                  </button>
+                </div>
+              </div>
+            </Panel>
+          )}
+
           <Panel>
             <p className="text-xs text-[#8b92a8]">Total Income</p>
             <p className="text-2xl font-semibold text-emerald-400">{totals.income.toLocaleString()} DC</p>
