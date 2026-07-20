@@ -1,5 +1,8 @@
 export { Home } from './Home'
 export { Dashboard } from './Dashboard'
+export { DashboardHub } from './DashboardHub'
+export { ClientDashboard } from './ClientDashboard'
+export { StaffDashboard } from './StaffDashboard'
 export { Banking } from './Banking'
 export { Stocks } from './Stocks'
 export { Realty } from './Realty'

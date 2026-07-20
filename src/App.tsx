@@ -23,6 +23,7 @@ import {
   Settings,
   UserCog,
   Banknote,
+  LayoutGrid,
 } from './icons'
 import { DiscordProfile } from './components/DiscordProfile'
 import { DiscordAuthProvider, useDiscordAuth } from './context/DiscordAuth'
@@ -34,6 +35,7 @@ import {
   Banking,
   Capital,
   Consultancy,
+  DashboardHub,
   Discord,
   Home,
   Investigators,
@@ -55,6 +57,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Home', icon: HomeIcon },
+  { label: 'Dashboard', icon: LayoutGrid },
   { label: 'Admin', icon: Shield },
   { label: 'About Us', icon: Info },
   { label: 'Banking', icon: Landmark },
@@ -82,6 +85,7 @@ const navItems: NavItem[] = [
 
 const viewMap: Record<string, () => ReactNode> = {
   Home,
+  Dashboard: DashboardHub,
   Admin,
   'About Us': About,
   Banking,
