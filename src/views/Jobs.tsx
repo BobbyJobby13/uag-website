@@ -64,10 +64,17 @@ export function Jobs() {
     } catch {}
   }, [jobs])
 
+  const uid = () => {
+    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+      return crypto.randomUUID()
+    }
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  }
+
   const addJob = () => {
     if (!form.title.trim() || !form.company.trim() || !form.description.trim()) return
     const posting: JobPosting = {
-      id: crypto.randomUUID(),
+      id: uid(),
       title: form.title.trim(),
       company: form.company.trim(),
       location: form.location.trim() || 'DemocracyCraft',
