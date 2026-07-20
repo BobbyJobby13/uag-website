@@ -104,6 +104,33 @@ export interface AccountBook {
   createdAt: string
 }
 
+export interface InvoiceItem {
+  id: string
+  description: string
+  quantity: number
+  rate: number
+  amount: number
+}
+
+export interface Invoice {
+  id: string
+  bookId: string
+  invoiceNumber: string
+  clientName: string
+  clientAddress?: string
+  issueDate: string
+  dueDate: string
+  items: InvoiceItem[]
+  subtotal: number
+  taxRate: number
+  taxAmount: number
+  total: number
+  notes?: string
+  status: 'draft' | 'sent' | 'paid'
+  createdBy?: string
+  createdAt: string
+}
+
 export interface Bank {
   id: string
   name: string
@@ -154,6 +181,7 @@ const KEYS = {
   tasks: 'uag_tasks',
   chat: 'uag_staff_chat',
   accountingBooks: 'uag_accounting_books',
+  invoices: 'uag_invoices',
   banks: 'uag_banks',
   bankConnections: 'uag_bank_connections',
 }
@@ -398,6 +426,34 @@ export function removeLedgerEntry(bookId: string, entryId: string) {
     b.id === bookId ? { ...b, entries: b.entries.filter((e) => e.id !== entryId) } : b
   )
   setAccountBooks(list)
+}
+
+export function getInvoices(): Invoice[] {
+  return getJSON<Invoice[]>(KEYS.invoices, [])
+}
+
+export function setInvoices(invoices: Invoice[]) {
+  setJSON(KEYS.invoices, invoices)
+}
+
+export function getInvoicesForBook(bookId: string): Invoice[] {
+  return getInvoices().filter((i) => i.bookId === bookId)
+}
+
+export function addInvoice(invoice: Omit<Invoice, 'id' | 'createdAt'>): Invoice {
+  const item: Invoice = { ...invoice, id: uid(), createdAt: new Date().toISOString() }
+  const list = [item, ...getInvoices()]
+  setInvoices(list)
+  return item
+}
+
+export function updateInvoice(id: string, partial: Partial<Invoice>) {
+  const list = getInvoices().map((i) => (i.id === id ? { ...i, ...partial } : i))
+  setInvoices(list)
+}
+
+export function removeInvoice(id: string) {
+  setInvoices(getInvoices().filter((i) => i.id !== id))
 }
 
 export function getBanks(): Bank[] {

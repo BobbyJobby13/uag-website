@@ -35,6 +35,8 @@ import MessageCircle from 'lucide-react/dist/esm/icons/message-circle.mjs'
 import MessageSquare from 'lucide-react/dist/esm/icons/message-square.mjs'
 import Pencil from 'lucide-react/dist/esm/icons/pencil.mjs'
 import Plus from 'lucide-react/dist/esm/icons/plus.mjs'
+import Printer from 'lucide-react/dist/esm/icons/printer.mjs'
+import Receipt from 'lucide-react/dist/esm/icons/receipt.mjs'
 import Trash2 from 'lucide-react/dist/esm/icons/trash-2.mjs'
 import UserCog from 'lucide-react/dist/esm/icons/user-cog.mjs'
 import UserPlus from 'lucide-react/dist/esm/icons/user-plus.mjs'
@@ -95,6 +97,8 @@ export {
   ShoppingBag,
   Pencil,
   Plus,
+  Printer,
+  Receipt,
   Trash2,
   TrendingUp,
   UserCog,

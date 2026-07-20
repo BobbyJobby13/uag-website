@@ -1,22 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Banknote, BookOpen, Download, FileSpreadsheet, FileText, Plus, Trash2, TrendingUp, UserPlus, Users } from '../icons'
+import { Banknote, BookOpen, Download, FileSpreadsheet, FileText, Plus, Printer, Receipt, Trash2, TrendingUp, UserPlus, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import {
   addAccountBook,
   addAccountBookMember,
+  addInvoice,
   addLedgerEntry,
   getAccessibleAccountBooks,
+  getInvoicesForBook,
   hasDepartment,
   removeAccountBook,
   removeAccountBookMember,
+  removeInvoice,
   removeLedgerEntry,
+  updateInvoice,
   type AccountBook,
+  type Invoice,
+  type InvoiceItem,
   type LedgerEntry,
 } from '../lib/data'
 
-type Tab = 'books' | 'ledger' | 'reports'
+type Tab = 'books' | 'ledger' | 'reports' | 'invoices'
 
 export function Accounting() {
   const { userName, isAdmin } = useDiscordAuth()
@@ -34,6 +40,20 @@ export function Accounting() {
     category: '',
     type: 'expense' as LedgerEntry['type'],
     amount: '',
+  })
+
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null)
+  const [invoiceForm, setInvoiceForm] = useState({
+    invoiceNumber: '',
+    clientName: '',
+    clientAddress: '',
+    issueDate: new Date().toISOString().split('T')[0],
+    dueDate: '',
+    taxRate: '0',
+    notes: '',
+    status: 'draft' as Invoice['status'],
+    items: [{ description: '', quantity: '1', rate: '' }],
   })
 
   const refreshBooks = () => {
@@ -72,6 +92,126 @@ export function Accounting() {
   const canManageBook = (book: AccountBook | undefined) => {
     if (!book || !userName) return false
     return isAdmin || book.owner === userName
+  }
+
+  const uid = () => {
+    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+      return crypto.randomUUID()
+    }
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  }
+
+  const refreshInvoices = () => {
+    if (!selectedBook) {
+      setInvoices([])
+      return
+    }
+    setInvoices(getInvoicesForBook(selectedBook.id))
+  }
+
+  useEffect(() => {
+    refreshInvoices()
+  }, [selectedBookId])
+
+  const resetInvoiceForm = () => {
+    setEditingInvoiceId(null)
+    setInvoiceForm({
+      invoiceNumber: '',
+      clientName: '',
+      clientAddress: '',
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: '',
+      taxRate: '0',
+      notes: '',
+      status: 'draft',
+      items: [{ description: '', quantity: '1', rate: '' }],
+    })
+  }
+
+  const invoiceTotals = useMemo(() => {
+    const subtotal = invoiceForm.items.reduce((acc, item) => {
+      const qty = Number(item.quantity) || 0
+      const rate = Number(item.rate) || 0
+      return acc + qty * rate
+    }, 0)
+    const taxRate = Number(invoiceForm.taxRate) || 0
+    const taxAmount = subtotal * (taxRate / 100)
+    return { subtotal, taxAmount, total: subtotal + taxAmount }
+  }, [invoiceForm.items, invoiceForm.taxRate])
+
+  const handleInvoiceItemChange = (index: number, field: 'description' | 'quantity' | 'rate', value: string) => {
+    setInvoiceForm((prev) => {
+      const items = [...prev.items]
+      items[index] = { ...items[index], [field]: value }
+      return { ...prev, items }
+    })
+  }
+
+  const handleAddInvoiceItem = () => {
+    setInvoiceForm((prev) => ({ ...prev, items: [...prev.items, { description: '', quantity: '1', rate: '' }] }))
+  }
+
+  const handleRemoveInvoiceItem = (index: number) => {
+    setInvoiceForm((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }))
+  }
+
+  const handleSaveInvoice = () => {
+    if (!selectedBook || !canEditBook(selectedBook) || !invoiceForm.clientName.trim()) return
+    const items: InvoiceItem[] = invoiceForm.items
+      .filter((i) => i.description.trim())
+      .map((i) => {
+        const quantity = Number(i.quantity) || 0
+        const rate = Number(i.rate) || 0
+        return { id: uid(), description: i.description.trim(), quantity, rate, amount: quantity * rate }
+      })
+    const payload = {
+      bookId: selectedBook.id,
+      invoiceNumber: invoiceForm.invoiceNumber.trim() || `INV-${Date.now()}`,
+      clientName: invoiceForm.clientName.trim(),
+      clientAddress: invoiceForm.clientAddress.trim(),
+      issueDate: invoiceForm.issueDate,
+      dueDate: invoiceForm.dueDate,
+      items,
+      subtotal: invoiceTotals.subtotal,
+      taxRate: Number(invoiceForm.taxRate) || 0,
+      taxAmount: invoiceTotals.taxAmount,
+      total: invoiceTotals.total,
+      notes: invoiceForm.notes.trim(),
+      status: invoiceForm.status,
+      createdBy: userName || undefined,
+    }
+    if (editingInvoiceId) {
+      updateInvoice(editingInvoiceId, payload)
+    } else {
+      addInvoice(payload)
+    }
+    resetInvoiceForm()
+    refreshInvoices()
+  }
+
+  const handleEditInvoice = (invoice: Invoice) => {
+    setEditingInvoiceId(invoice.id)
+    setInvoiceForm({
+      invoiceNumber: invoice.invoiceNumber,
+      clientName: invoice.clientName,
+      clientAddress: invoice.clientAddress || '',
+      issueDate: invoice.issueDate,
+      dueDate: invoice.dueDate,
+      taxRate: String(invoice.taxRate),
+      notes: invoice.notes || '',
+      status: invoice.status,
+      items: invoice.items.map((i) => ({ description: i.description, quantity: String(i.quantity), rate: String(i.rate) })),
+    })
+  }
+
+  const handleDeleteInvoice = (id: string) => {
+    removeInvoice(id)
+    if (editingInvoiceId === id) resetInvoiceForm()
+    refreshInvoices()
+  }
+
+  const handlePrintInvoice = () => {
+    window.print()
   }
 
   const handleAddBook = () => {
@@ -212,7 +352,7 @@ export function Accounting() {
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-[#e8eaf2]">Accounting Department</h1>
         <p className="mt-1 text-sm text-[#8b92a8]">
-          Multi-company books, ledgers, reports, and AI-assisted bookkeeping.
+          Multi-company books, ledgers, invoices, reports, and AI-assisted bookkeeping.
         </p>
       </header>
 
@@ -220,6 +360,7 @@ export function Accounting() {
         {[
           { id: 'books', label: 'Companies / Books', icon: BookOpen },
           { id: 'ledger', label: 'Ledger', icon: Banknote },
+          { id: 'invoices', label: 'Invoices', icon: Receipt },
           { id: 'reports', label: 'Reports', icon: TrendingUp },
         ].map((t) => {
           const Icon = t.icon
@@ -635,10 +776,317 @@ export function Accounting() {
         </div>
       )}
 
+      {activeTab === 'invoices' && (
+        <div className="space-y-6">
+          <Panel>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-[#e8eaf2]">
+                {selectedBook ? `Invoices for ${selectedBook.name}` : 'Select a book'}
+              </h2>
+              <select
+                value={selectedBookId}
+                onChange={(e) => setSelectedBookId(e.target.value)}
+                className={inputClass}
+              >
+                {books.length === 0 && <option value="">No books</option>}
+                {books.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedBook && (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={resetInvoiceForm}
+                  className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-500"
+                >
+                  <Plus size={14} />
+                  New Invoice
+                </button>
+              </div>
+            )}
+          </Panel>
+
+          {selectedBook && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="space-y-6">
+                <Panel>
+                  <h3 className="mb-4 text-sm font-semibold text-[#e8eaf2]">
+                    {editingInvoiceId ? 'Edit Invoice' : 'Create Invoice'}
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <input
+                      type="text"
+                      placeholder="Invoice #"
+                      value={invoiceForm.invoiceNumber}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, invoiceNumber: e.target.value })}
+                      className={inputClass}
+                    />
+                    <input
+                      type="date"
+                      value={invoiceForm.issueDate}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, issueDate: e.target.value })}
+                      className={inputClass}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Client name"
+                      value={invoiceForm.clientName}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, clientName: e.target.value })}
+                      className={inputClass}
+                    />
+                    <input
+                      type="date"
+                      placeholder="Due date"
+                      value={invoiceForm.dueDate}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, dueDate: e.target.value })}
+                      className={inputClass}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Tax %"
+                      value={invoiceForm.taxRate}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, taxRate: e.target.value })}
+                      className={inputClass}
+                    />
+                    <select
+                      value={invoiceForm.status}
+                      onChange={(e) => setInvoiceForm({ ...invoiceForm, status: e.target.value as Invoice['status'] })}
+                      className={inputClass}
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="sent">Sent</option>
+                      <option value="paid">Paid</option>
+                    </select>
+                  </div>
+                  <textarea
+                    placeholder="Client address"
+                    value={invoiceForm.clientAddress}
+                    onChange={(e) => setInvoiceForm({ ...invoiceForm, clientAddress: e.target.value })}
+                    className={`${inputClass} mt-3 min-h-[80px] w-full`}
+                  />
+                  <textarea
+                    placeholder="Invoice notes / payment terms"
+                    value={invoiceForm.notes}
+                    onChange={(e) => setInvoiceForm({ ...invoiceForm, notes: e.target.value })}
+                    className={`${inputClass} mt-3 min-h-[60px] w-full`}
+                  />
+
+                  <h4 className="mb-2 mt-4 text-xs font-medium text-[#8b92a8]">Line Items</h4>
+                  <div className="space-y-2">
+                    {invoiceForm.items.map((item, idx) => (
+                      <div key={idx} className="grid grid-cols-1 gap-2 rounded-lg border border-[#1c2335] bg-[#0b0f19] p-3 sm:grid-cols-12">
+                        <input
+                          type="text"
+                          placeholder="Description"
+                          value={item.description}
+                          onChange={(e) => handleInvoiceItemChange(idx, 'description', e.target.value)}
+                          className={`${inputClass} sm:col-span-6`}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Qty"
+                          value={item.quantity}
+                          onChange={(e) => handleInvoiceItemChange(idx, 'quantity', e.target.value)}
+                          className={`${inputClass} sm:col-span-2`}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Rate"
+                          value={item.rate}
+                          onChange={(e) => handleInvoiceItemChange(idx, 'rate', e.target.value)}
+                          className={`${inputClass} sm:col-span-3`}
+                        />
+                        <div className="flex items-center justify-end sm:col-span-1">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveInvoiceItem(idx)}
+                            className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        <div className="sm:col-span-12 text-right text-xs text-[#8b92a8]">
+                          {((Number(item.quantity) || 0) * (Number(item.rate) || 0)).toLocaleString()} DC
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleAddInvoiceItem}
+                      className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                    >
+                      <Plus size={14} />
+                      Add Item
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveInvoice}
+                      disabled={!invoiceForm.clientName.trim() || !canEditBook(selectedBook)}
+                      className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                    >
+                      <Receipt size={14} />
+                      {editingInvoiceId ? 'Update Invoice' : 'Save Invoice'}
+                    </button>
+                    {editingInvoiceId && (
+                      <button
+                        type="button"
+                        onClick={resetInvoiceForm}
+                        className="rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </Panel>
+
+                {invoices.length > 0 && (
+                  <Panel>
+                    <h3 className="mb-4 text-sm font-semibold text-[#e8eaf2]">Saved Invoices</h3>
+                    <div className="space-y-2">
+                      {invoices.map((inv) => (
+                        <div
+                          key={inv.id}
+                          className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#111827] p-3"
+                        >
+                          <div>
+                            <p className="text-sm font-medium text-[#e8eaf2]">{inv.invoiceNumber}</p>
+                            <p className="text-xs text-[#8b92a8]">
+                              {inv.clientName} • {inv.total.toLocaleString()} DC
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span
+                              className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                inv.status === 'paid'
+                                  ? 'bg-emerald-500/10 text-emerald-400'
+                                  : inv.status === 'sent'
+                                    ? 'bg-indigo-500/10 text-indigo-400'
+                                    : 'bg-[#2a344e] text-[#8b92a8]'
+                              }`}
+                            >
+                              {inv.status}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleEditInvoice(inv)}
+                              className="rounded-md px-2 py-1 text-xs text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteInvoice(inv.id)}
+                              className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
+                              aria-label="Delete invoice"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Panel>
+                )}
+              </div>
+
+              <Panel className="invoice-print bg-[#f8f9fc] text-[#111827]">
+                <div className="mb-4 flex items-center justify-between border-b border-[#e2e4eb] pb-3">
+                  <h3 className="text-sm font-semibold">Invoice Preview</h3>
+                  <button
+                    type="button"
+                    onClick={handlePrintInvoice}
+                    className="flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#e8eaf2] transition hover:bg-[#1c2335]"
+                  >
+                    <Printer size={14} />
+                    Print / PDF
+                  </button>
+                </div>
+                <div className="space-y-4 p-2">
+                  <div className="flex flex-col justify-between gap-4 sm:flex-row">
+                    <div>
+                      <h2 className="text-xl font-bold">{selectedBook?.name || 'Company Name'}</h2>
+                      <p className="text-sm text-[#5d6a87]">Invoice {invoiceForm.invoiceNumber.trim() || '#'}</p>
+                    </div>
+                    <div className="text-right text-sm text-[#5d6a87]">
+                      <p>Issued: {invoiceForm.issueDate || '-'}</p>
+                      <p>Due: {invoiceForm.dueDate || '-'}</p>
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-[#e2e4eb] p-3">
+                    <p className="text-xs font-semibold uppercase text-[#8b92a8]">Bill to</p>
+                    <p className="font-medium">{invoiceForm.clientName || 'Client Name'}</p>
+                    {invoiceForm.clientAddress && (
+                      <p className="mt-1 whitespace-pre-line text-sm text-[#5d6a87]">{invoiceForm.clientAddress}</p>
+                    )}
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead className="bg-[#e2e4eb] text-[#111827]">
+                      <tr>
+                        <th className="px-3 py-2 text-left font-medium">Description</th>
+                        <th className="px-3 py-2 text-right font-medium">Qty</th>
+                        <th className="px-3 py-2 text-right font-medium">Rate</th>
+                        <th className="px-3 py-2 text-right font-medium">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e2e4eb]">
+                      {invoiceForm.items.filter((i) => i.description.trim()).length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="px-3 py-3 text-center text-[#8b92a8]">
+                            No line items yet.
+                          </td>
+                        </tr>
+                      )}
+                      {invoiceForm.items
+                        .filter((i) => i.description.trim())
+                        .map((item, idx) => {
+                          const qty = Number(item.quantity) || 0
+                          const rate = Number(item.rate) || 0
+                          const amount = qty * rate
+                          return (
+                            <tr key={idx}>
+                              <td className="px-3 py-2">{item.description}</td>
+                              <td className="px-3 py-2 text-right">{qty}</td>
+                              <td className="px-3 py-2 text-right">{rate.toLocaleString()} DC</td>
+                              <td className="px-3 py-2 text-right font-medium">{amount.toLocaleString()} DC</td>
+                            </tr>
+                          )
+                        })}
+                    </tbody>
+                  </table>
+                  <div className="flex flex-col gap-1 border-t border-[#e2e4eb] pt-3 text-right text-sm">
+                    <p className="text-[#5d6a87]">Subtotal: {invoiceTotals.subtotal.toLocaleString()} DC</p>
+                    <p className="text-[#5d6a87]">
+                      Tax ({invoiceForm.taxRate || 0}%): {invoiceTotals.taxAmount.toLocaleString()} DC
+                    </p>
+                    <p className="text-lg font-bold">Total: {invoiceTotals.total.toLocaleString()} DC</p>
+                  </div>
+                  {invoiceForm.notes && (
+                    <div className="rounded-lg bg-[#f0f2f5] p-3 text-sm text-[#5d6a87]">
+                      <p className="font-medium text-[#111827]">Notes</p>
+                      <p className="whitespace-pre-line">{invoiceForm.notes}</p>
+                    </div>
+                  )}
+                  <div className="text-center text-xs text-[#8b92a8]">
+                    Status: <span className="font-medium capitalize">{invoiceForm.status}</span>
+                  </div>
+                </div>
+              </Panel>
+            </div>
+          )}
+        </div>
+      )}
+
       <AIAssistant
         service="accounting"
         department="Accounting"
-        placeholder="Ask the accounting AI about ledger entries, reports, or financial drafts..."
+        placeholder="Ask the accounting AI about ledger entries, reports, invoices, or financial drafts..."
       />
     </div>
   )

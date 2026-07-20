@@ -165,3 +165,35 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+@media print {
+  html,
+  body,
+  #root {
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .invoice-print,
+  .invoice-print * {
+    visibility: visible;
+  }
+  .invoice-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 24px;
+    background: #fff !important;
+    color: #111827 !important;
+    box-shadow: none;
+    border: none;
+  }
+  .invoice-print button,
+  .invoice-print h3.text-sm.font-semibold:first-child {
+    display: none;
+  }
+}
