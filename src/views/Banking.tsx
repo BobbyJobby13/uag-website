@@ -136,7 +136,7 @@ export function Banking() {
   const bankById = (id: string) => banks.find((b) => b.id === id)
 
   return (
-    <div className="animate-fade-in-up mx-auto max-w-6xl p-8">
+    <div className="animate-fade-in-up page">
       <header className="mb-8">
         <h1 className="glow-text text-3xl font-extrabold tracking-tight text-white"><span className="gradient-text">Banking Portal</span></h1>
         <p className="mt-1 text-sm text-[#8b92a8]">

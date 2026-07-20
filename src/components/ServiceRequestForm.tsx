@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Send } from '../icons'
+import { Panel } from './Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import { addRequest, type ServiceRequest } from '../lib/data'
 
@@ -39,8 +40,8 @@ export function ServiceRequestForm({
 
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <div className="rounded-2xl border border-[#1c2335] bg-[#080b12]/80 p-6 backdrop-blur-sm">
-        <h2 className="text-xl font-bold text-white">{title}</h2>
+      <Panel>
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
         <p className="mt-1 text-sm text-[#8b92a8]">
           Fill out the form below and the relevant UAG department will review your request.
         </p>
@@ -51,21 +52,21 @@ export function ServiceRequestForm({
             placeholder="Your name / Discord username"
             value={form.clientName}
             onChange={(e) => setForm({ ...form, clientName: e.target.value })}
-            className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+            className="input"
           />
           <input
             type="text"
             placeholder="Discord / contact info"
             value={form.contact}
             onChange={(e) => setForm({ ...form, contact: e.target.value })}
-            className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+            className="input"
           />
           <textarea
             placeholder={descriptionPlaceholder}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             rows={4}
-            className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20 sm:col-span-2"
+            className="textarea sm:col-span-2"
           />
         </div>
 
@@ -73,7 +74,7 @@ export function ServiceRequestForm({
           type="button"
           onClick={handleSubmit}
           disabled={!form.clientName.trim() || !form.description.trim() || status === 'submitting'}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-50"
+          className="btn-primary mt-4 w-full"
         >
           <Send size={16} />
           {status === 'submitting' ? 'Submitting...' : 'Submit Request'}
@@ -82,7 +83,7 @@ export function ServiceRequestForm({
         {status === 'submitted' && (
           <p className="mt-3 text-sm text-emerald-400">Request submitted. A staff member will reach out soon.</p>
         )}
-      </div>
+      </Panel>
     </div>
   )
 }

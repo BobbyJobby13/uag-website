@@ -3,7 +3,7 @@ import { ArrowRight } from '../icons'
 
 export function Placeholder({ title }: { title: string }) {
   return (
-    <div className="animate-fade-in-up mx-auto max-w-6xl p-8">
+    <div className="animate-fade-in-up page">
       <header className="mb-8">
         <h1 className="glow-text text-3xl font-extrabold tracking-tight text-white">{title}</h1>
         <p className="mt-2 text-sm text-[#8b92a8]">

@@ -36,7 +36,7 @@ export function Dashboard() {
     hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="animate-fade-in-up mx-auto max-w-6xl p-8">
+    <div className="animate-fade-in-up page">
       <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="glow-text text-4xl font-extrabold tracking-tight text-white">

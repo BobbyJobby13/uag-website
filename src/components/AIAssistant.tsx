@@ -102,24 +102,24 @@ export function AIAssistant({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        className="btn-primary"
       >
         <Bot size={16} />
         {open ? 'Close AI assistant' : 'Ask AI'}
       </button>
 
       {open && (
-        <div className="mt-3 flex h-80 flex-col rounded-xl border border-[#1c2335] bg-[#0b0f19] shadow-2xl">
-          <div className="flex items-center gap-2 rounded-t-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white">
+        <div className="glass-panel mt-3 flex h-96 flex-col overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-[#1c2335] bg-[#111827]/60 px-4 py-3 text-sm font-semibold text-white">
             <Bot size={16} className="text-indigo-400" />
             {systemNames[service] || 'AI Assistant'}
           </div>
 
-          <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
+          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-4">
             {messages.map((m, i) => (
               <div key={i}>
                 <div
-                  className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+                  className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
                     m.role === 'user'
                       ? 'ml-auto bg-indigo-600 text-white'
                       : 'bg-[#111827] text-[#9aa3b8]'
@@ -128,11 +128,11 @@ export function AIAssistant({
                   {m.text}
                 </div>
                 {m.role === 'assistant' && service === 'accounting' && i > 0 && (
-                  <div className="mt-1 flex items-center gap-2">
+                  <div className="mt-1.5 flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => exportReportAsPDF(m.text)}
-                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-indigo-500/10 hover:text-indigo-400"
+                      className="btn-ghost text-[11px]"
                     >
                       <FileText size={12} />
                       PDF
@@ -140,7 +140,7 @@ export function AIAssistant({
                     <button
                       type="button"
                       onClick={() => openInGoogleDocs(m.text, i)}
-                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-emerald-500/10 hover:text-emerald-400"
+                      className="btn-ghost text-[11px]"
                     >
                       <ExternalLink size={12} />
                       Google Doc
@@ -154,7 +154,7 @@ export function AIAssistant({
                           setTimeout(() => setCopiedId(null), 2000)
                         } catch {}
                       }}
-                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-[10px] font-medium text-[#8b92a8] transition hover:bg-[#2a344e] hover:text-white"
+                      className="btn-ghost text-[11px]"
                     >
                       <Copy size={12} />
                       {copiedId === i ? 'Copied' : 'Copy'}
@@ -164,24 +164,27 @@ export function AIAssistant({
               </div>
             ))}
             {loading && (
-              <div className="bg-[#111827] px-3 py-2 text-sm text-[#8b92a8]">Typing...</div>
+              <div className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-3.5 py-2.5 text-sm text-[#8b92a8]">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
+                Typing…
+              </div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 border-t border-[#1c2335] p-3">
+          <div className="flex items-center gap-2 border-t border-[#1c2335] bg-[#111827]/40 p-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder={placeholder}
-              className="flex-1 rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+              className="input flex-1"
             />
             <button
               type="button"
               onClick={() => send()}
               disabled={loading || !input.trim()}
-              className="rounded-lg bg-indigo-600 p-2 text-white transition hover:bg-indigo-500 disabled:opacity-50"
+              className="btn-primary p-2.5"
             >
               <Send size={16} />
             </button>

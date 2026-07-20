@@ -30,10 +30,10 @@ const services = [
 
 export function About() {
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Utterly Amazing Group LLC</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Utterly Amazing Group LLC</h1>
+        <p className="page-subtitle">
           One-stop portal for DemocracyCraft and UAG operations.
         </p>
       </header>

@@ -25,10 +25,10 @@ export function Discord() {
   const uagGuild = guilds?.find((g) => g.id === getDiscordGuildId())
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Discord Portal</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Discord Portal</h1>
+        <p className="page-subtitle">
           Login with Discord to link your UAG profile, banner, guilds and staff access.
         </p>
       </header>

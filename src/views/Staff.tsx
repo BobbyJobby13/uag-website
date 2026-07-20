@@ -21,7 +21,7 @@ export function Staff() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="page">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-white">Staff Directory</h1>
         <p className="mt-1 text-sm text-[#8b92a8]">

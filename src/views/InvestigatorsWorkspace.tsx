@@ -104,10 +104,10 @@ export function Investigators() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Investigations Department</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Investigations Department</h1>
+        <p className="page-subtitle">
           Case notes, evidence tracking, and AI-assisted summaries.
         </p>
       </header>
@@ -145,27 +145,27 @@ export function Investigators() {
               placeholder="Subject / client name"
               value={form.clientName}
               onChange={(e) => setForm({ ...form, clientName: e.target.value })}
-              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+              className="input"
             />
             <input
               type="text"
               placeholder="Discord / contact"
               value={form.contact}
               onChange={(e) => setForm({ ...form, contact: e.target.value })}
-              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+              className="input"
             />
             <textarea
               placeholder="Case facts, leads, and context..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20 sm:col-span-2"
+              className="textarea sm:col-span-2"
             />
           </div>
           <button
             type="button"
             onClick={createCase}
-            className="mt-4 flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+            className="btn-primary mt-4"
           >
             <Plus size={16} />
             Create Case
@@ -220,7 +220,7 @@ export function Investigators() {
                 onChange={(e) => updateNotes(req, e.target.value)}
                 placeholder="Investigation notes..."
                 rows={2}
-                className="mt-3 w-full rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-xs text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                className="textarea mt-3 text-xs"
               />
               <Attachments
                 attachments={req.attachments || []}

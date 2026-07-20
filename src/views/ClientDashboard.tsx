@@ -65,15 +65,11 @@ export function ClientDashboard() {
     return (
       <div className="mx-auto max-w-2xl p-8">
         <Panel className="text-center">
-          <h2 className="text-xl font-bold text-white">Client Dashboard</h2>
+          <h2 className="text-xl font-semibold text-white">Client Dashboard</h2>
           <p className="mt-2 text-sm text-[#8b92a8]">
             Log in with Discord to view your tickets, accounts, plots, and bank connections.
           </p>
-          <button
-            type="button"
-            onClick={login}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
-          >
+          <button type="button" onClick={login} className="btn-primary mt-4">
             <Users size={16} />
             Login with Discord
           </button>
@@ -85,12 +81,10 @@ export function ClientDashboard() {
   const openTickets = tickets.filter((t) => t.status !== 'Closed')
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">
-          Client Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Client Dashboard</h1>
+        <p className="page-subtitle">
           Your tickets, accounts, plots, and bank connections in one place.
         </p>
       </header>

@@ -32,7 +32,7 @@ export function StaffChat() {
 
   if (!allowed) {
     return (
-      <div className="mx-auto max-w-4xl p-8">
+      <div className="page">
         <Panel>
           <h1 className="text-xl font-bold text-white">Access Denied</h1>
           <p className="mt-2 text-sm text-[#8b92a8]">Staff Chat is for UAG staff only.</p>

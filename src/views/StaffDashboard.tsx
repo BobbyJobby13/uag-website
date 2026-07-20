@@ -49,12 +49,14 @@ function caseBadge(status: CourtCase['status']) {
 
 function SectionHeader({ icon: Icon, title, subtitle }: { icon: typeof Scale; title: string; subtitle: string }) {
   return (
-    <div className="mb-4">
-      <div className="flex items-center gap-2">
-        <Icon size={18} className="text-indigo-400" />
-        <h2 className="text-lg font-bold text-white">{title}</h2>
+    <div className="mb-4 flex items-center gap-3">
+      <div className="icon-box" style={{ width: '34px', height: '34px', borderRadius: '10px' }}>
+        <Icon size={16} />
       </div>
-      <p className="mt-0.5 text-xs text-[#5d6a87]">{subtitle}</p>
+      <div>
+        <h2 className="section-title">{title}</h2>
+        <p className="section-subtitle">{subtitle}</p>
+      </div>
     </div>
   )
 }
@@ -391,10 +393,10 @@ export function StaffDashboard() {
   const isInvestigator = isAdmin || hasDepartment(userName, 'Investigations')
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Staff Dashboard</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Staff Dashboard</h1>
+        <p className="page-subtitle">
           Department overviews tailored to your role{isAdmin ? ' — full admin access enabled' : ''}.
         </p>
       </header>

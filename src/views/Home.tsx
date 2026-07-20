@@ -1,3 +1,4 @@
+import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import {
   ArrowRight,
@@ -49,14 +50,14 @@ export function Home() {
       <div className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
       <div className="pointer-events-none absolute bottom-0 left-1/3 h-96 w-96 rounded-full bg-purple-600/15 blur-[120px]" />
 
-      <section className="relative px-8 pb-12 pt-16">
+      <section className="relative px-8 pb-16 pt-20">
         <div className="mx-auto max-w-6xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-300">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
             UAG Portal v2.0
           </div>
 
-          <h1 className="glow-text mt-6 max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="glow-text mt-8 max-w-3xl text-5xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
             The future of{' '}
             <span className="gradient-text">DemocracyCraft</span> business
           </h1>
@@ -71,18 +72,14 @@ export function Home() {
             <button
               type="button"
               onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-110"
+              className="btn-primary"
             >
               Explore services
               <ArrowRight size={16} />
             </button>
 
             {!userName ? (
-              <button
-                type="button"
-                onClick={login}
-                className="flex items-center gap-2 rounded-xl border border-[#2a344e] bg-[#0b0f19]/80 px-6 py-3 text-sm font-semibold text-[#e8eaf2] backdrop-blur-md transition hover:border-indigo-500/50 hover:bg-[#111827]"
-              >
+              <button type="button" onClick={login} className="btn-secondary">
                 <Users size={16} />
                 Login with Discord
               </button>
@@ -91,7 +88,7 @@ export function Home() {
                 href="https://discord.gg/4uaq7tWBSY"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 rounded-xl border border-[#2a344e] bg-[#0b0f19]/80 px-6 py-3 text-sm font-semibold text-[#e8eaf2] backdrop-blur-md transition hover:border-indigo-500/50 hover:bg-[#111827]"
+                className="btn-secondary"
               >
                 <MessageCircle size={16} />
                 Join Discord
@@ -100,15 +97,12 @@ export function Home() {
             )}
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map((s) => (
-              <div
-                key={s.label}
-                className="rounded-2xl border border-[#1c2335] bg-[#080b12]/60 p-5 backdrop-blur-sm transition hover:border-[#2a344e]"
-              >
+              <Panel key={s.label} className="p-5">
                 <div className="text-3xl font-bold text-white">{s.value}</div>
                 <div className="text-sm text-[#5d6a87]">{s.label}</div>
-              </div>
+              </Panel>
             ))}
           </div>
         </div>
@@ -118,7 +112,7 @@ export function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white">Our divisions</h2>
+              <h2 className="text-2xl font-semibold text-white">Our divisions</h2>
               <p className="mt-1 text-sm text-[#5d6a87]">
                 Everything you need to operate a business in DemocracyCraft.
               </p>
@@ -129,16 +123,16 @@ export function Home() {
             {divisions.map((d) => {
               const Icon = d.icon
               return (
-                <div
+                <Panel
                   key={d.label}
-                  className="group relative rounded-2xl border border-[#1c2335] bg-[#080b12]/60 p-5 backdrop-blur-sm transition hover:-translate-y-1 hover:border-indigo-500/40 hover:bg-[#0b0f19]/90 hover:shadow-xl hover:shadow-indigo-500/10"
+                  className="group p-5 transition hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-indigo-500/10"
                 >
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20">
+                  <div className="icon-box mb-4">
                     <Icon size={20} />
                   </div>
                   <h3 className="text-sm font-bold text-white">{d.label}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-[#8b92a8]">{d.desc}</p>
-                </div>
+                </Panel>
               )
             })}
           </div>
@@ -147,16 +141,16 @@ export function Home() {
 
       <section className="relative px-8 py-16">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold text-white">UAGCapital companies</h2>
+          <h2 className="text-2xl font-semibold text-white">UAGCapital companies</h2>
           <p className="mt-1 text-sm text-[#5d6a87]">
             The businesses owned and operated under the UAG umbrella.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {UAG_CAPITAL_COMPANIES.map((c) => (
-              <div
+              <Panel
                 key={c.name}
-                className="flex items-center gap-4 rounded-2xl border border-[#1c2335] bg-[#080b12]/60 p-4 backdrop-blur-sm transition hover:border-[#2a344e]"
+                className="flex items-center gap-4 p-4 transition hover:border-[#2a344e]"
               >
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#111827] text-[#8b92a8]">
                   {c.website ? <Globe size={18} /> : <Briefcase size={18} />}
@@ -175,7 +169,7 @@ export function Home() {
                     </a>
                   )}
                 </div>
-              </div>
+              </Panel>
             ))}
           </div>
         </div>
@@ -183,31 +177,27 @@ export function Home() {
 
       <section className="relative px-8 py-16">
         <div className="mx-auto max-w-6xl">
-          <div className="relative overflow-hidden rounded-3xl border border-[#1c2335] bg-gradient-to-br from-indigo-900/40 to-purple-900/30 p-10 text-center">
+          <Panel className="relative overflow-hidden p-10 text-center">
             <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-indigo-500/30 blur-[80px]" />
             <div className="relative">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">Ready to do business?</h2>
+              <h2 className="text-2xl font-semibold text-white sm:text-3xl">Ready to do business?</h2>
               <p className="mx-auto mt-3 max-w-xl text-sm text-[#8b92a8]">
                 Staff and clients can log in with Discord to access services, submit requests, and manage accounts.
               </p>
-              <div className="mt-6 flex justify-center gap-3">
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
                 {!userName ? (
-                  <button
-                    type="button"
-                    onClick={login}
-                    className="flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#02040a] transition hover:bg-[#e8eaf2]"
-                  >
+                  <button type="button" onClick={login} className="btn-primary">
                     <Users size={16} />
                     Login with Discord
                   </button>
                 ) : (
-                  <span className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#02040a]">
+                  <span className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#02040a]">
                     Welcome back, {userName}
                   </span>
                 )}
               </div>
             </div>
-          </div>
+          </Panel>
         </div>
       </section>
     </div>

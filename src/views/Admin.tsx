@@ -120,7 +120,7 @@ export function Admin() {
 
   if (!allowed) {
     return (
-      <div className="mx-auto max-w-6xl p-8">
+      <div className="page">
         <Panel>
           <h1 className="text-xl font-bold text-white">Admin Control Center</h1>
           <p className="mt-2 text-sm text-[#8b92a8]">
@@ -132,7 +132,7 @@ export function Admin() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="page">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-white">Admin Control Center</h1>
         <p className="mt-1 text-sm text-[#8b92a8]">

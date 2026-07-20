@@ -11,10 +11,10 @@ const offerings = [
 
 export function Consultancy() {
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Corporate Consultancy</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Corporate Consultancy</h1>
+        <p className="page-subtitle">
           Strategic guidance and operational support for connected clients.
         </p>
       </header>

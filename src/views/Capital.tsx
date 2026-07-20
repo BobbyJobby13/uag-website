@@ -9,10 +9,10 @@ const tiers = [
 
 export function Capital() {
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Capital & Funds</h1>
-        <p className="mt-1 text-sm text-[#8b92a8]">
+    <div className="page">
+      <header className="page-header">
+        <h1 className="page-title">Capital & Funds</h1>
+        <p className="page-subtitle">
           Invest with our Capital Fund and manage allocation across portfolios.
         </p>
       </header>
