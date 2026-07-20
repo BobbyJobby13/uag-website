@@ -23,7 +23,7 @@ export function Stocks() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Stock Exchanges</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Live access to NER, TSE and related market positions.
         </p>
       </header>
@@ -32,7 +32,7 @@ export function Stocks() {
         {tickers.map((t) => (
           <Panel key={t.symbol}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#9ca3af]">{t.symbol}</span>
+              <span className="text-xs font-medium text-[#8b92a8]">{t.symbol}</span>
               <TrendingUp size={16} className={t.positive ? 'text-emerald-400' : 'text-rose-400'} />
             </div>
             <div className="mt-2 text-xl font-semibold text-white">{t.price}</div>
@@ -46,18 +46,18 @@ export function Stocks() {
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel className="lg:col-span-1">
           <div className="mb-4 flex items-center gap-2">
-            <BarChart3 size={18} className="text-blue-400" />
+            <BarChart3 size={18} className="text-indigo-400" />
             <h2 className="font-semibold text-white">Connected Exchanges</h2>
           </div>
           <div className="space-y-3">
             {exchanges.map((ex) => (
               <div
                 key={ex.name}
-                className="flex items-center justify-between rounded-lg bg-[#181a20] p-3"
+                className="flex items-center justify-between rounded-lg bg-[#111827] p-3"
               >
                 <div>
                   <div className="text-sm font-medium text-white">{ex.name}</div>
-                  <div className="text-xs text-[#6b7280]">{ex.fullName}</div>
+                  <div className="text-xs text-[#5d6a87]">{ex.fullName}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   {ex.url ? (
@@ -65,7 +65,7 @@ export function Stocks() {
                       href={ex.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 rounded-md bg-[#2a2c35] px-2 py-1 text-xs font-medium text-blue-400 transition hover:bg-[#3a3c45]"
+                      className="flex items-center gap-1 rounded-md bg-[#1c2335] px-2 py-1 text-xs font-medium text-indigo-400 transition hover:bg-[#2a344e]"
                     >
                       Open <ExternalLink size={12} />
                     </a>
@@ -81,12 +81,12 @@ export function Stocks() {
 
         <Panel className="lg:col-span-2">
           <div className="mb-4 flex items-center gap-2">
-            <TrendingUp size={18} className="text-blue-400" />
+            <TrendingUp size={18} className="text-indigo-400" />
             <h2 className="font-semibold text-white">Holdings</h2>
           </div>
-          <div className="overflow-hidden rounded-xl border border-[#1e2028]">
+          <div className="overflow-hidden rounded-xl border border-[#1c2335]">
             <table className="w-full text-sm">
-              <thead className="bg-[#15161b] text-[#9ca3af]">
+              <thead className="bg-[#111827] text-[#8b92a8]">
                 <tr>
                   <th className="px-5 py-3 text-left font-medium">Asset</th>
                   <th className="px-5 py-3 text-left font-medium">Exchange</th>
@@ -94,11 +94,11 @@ export function Stocks() {
                   <th className="px-5 py-3 text-left font-medium">Change</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e2028] bg-[#111217]">
+              <tbody className="divide-y divide-[#1c2335] bg-[#0b0f19]">
                 {holdings.map((h) => (
-                  <tr key={h.name} className="transition hover:bg-[#181a20]">
+                  <tr key={h.name} className="transition hover:bg-[#111827]">
                     <td className="px-5 py-4 font-medium text-white">{h.name}</td>
-                    <td className="px-5 py-4 text-[#9ca3af]">{h.exchange}</td>
+                    <td className="px-5 py-4 text-[#8b92a8]">{h.exchange}</td>
                     <td className="px-5 py-4 text-white">{h.value}</td>
                     <td className="px-5 py-4 text-emerald-400">{h.change}</td>
                   </tr>

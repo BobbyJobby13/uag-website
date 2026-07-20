@@ -55,15 +55,15 @@ export function Chatbot() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition hover:bg-blue-500"
+        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition hover:bg-indigo-500"
         aria-label="Open assistant"
       >
         {open ? '×' : <Bot size={24} />}
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 z-50 flex h-96 w-80 flex-col rounded-xl border border-[#2a2c35] bg-[#111217] shadow-2xl">
-          <div className="flex items-center gap-3 rounded-t-xl bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 text-white">
+        <div className="fixed bottom-20 right-6 z-50 flex h-96 w-80 flex-col rounded-xl border border-[#1c2335] bg-[#0b0f19] shadow-2xl">
+          <div className="flex items-center gap-3 rounded-t-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white">
             <MessageCircle size={18} />
             <span className="text-sm font-semibold">UAG Assistant</span>
           </div>
@@ -74,32 +74,32 @@ export function Chatbot() {
                 key={i}
                 className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
                   m.role === 'user'
-                    ? 'ml-auto bg-blue-600 text-white'
-                    : 'bg-[#181a20] text-[#e5e7eb]'
+                    ? 'ml-auto bg-indigo-600 text-white'
+                    : 'bg-[#111827] text-[#9aa3b8]'
                 }`}
               >
                 {m.text}
               </div>
             ))}
             {loading && (
-              <div className="bg-[#181a20] px-3 py-2 text-sm text-[#9ca3af]">Typing...</div>
+              <div className="bg-[#111827] px-3 py-2 text-sm text-[#8b92a8]">Typing...</div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 border-t border-[#2a2c35] p-3">
+          <div className="flex items-center gap-2 border-t border-[#1c2335] p-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Ask me anything..."
-              className="flex-1 rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="flex-1 rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <button
               type="button"
               onClick={send}
               disabled={loading || !input.trim()}
-              className="rounded-lg bg-blue-600 p-2 text-white transition hover:bg-blue-500 disabled:opacity-50"
+              className="rounded-lg bg-indigo-600 p-2 text-white transition hover:bg-indigo-500 disabled:opacity-50"
               aria-label="Send"
             >
               <Send size={16} />

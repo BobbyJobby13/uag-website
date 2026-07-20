@@ -24,7 +24,7 @@ export function Staff() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-white">Staff Directory</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Accounting, Legal, Investigations, Construction, and Management teams.
         </p>
       </header>
@@ -34,7 +34,7 @@ export function Staff() {
           type="button"
           onClick={() => setFilter('All')}
           className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-            filter === 'All' ? 'bg-blue-600 text-white' : 'bg-[#181a20] text-[#9ca3af] hover:text-white'
+            filter === 'All' ? 'bg-indigo-600 text-white' : 'bg-[#111827] text-[#8b92a8] hover:text-white'
           }`}
         >
           All
@@ -45,7 +45,7 @@ export function Staff() {
             type="button"
             onClick={() => setFilter(d.id)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-              filter === d.id ? 'bg-blue-600 text-white' : 'bg-[#181a20] text-[#9ca3af] hover:text-white'
+              filter === d.id ? 'bg-indigo-600 text-white' : 'bg-[#111827] text-[#8b92a8] hover:text-white'
             }`}
           >
             {d.label}
@@ -55,7 +55,7 @@ export function Staff() {
 
       {filtered.length === 0 && (
         <Panel>
-          <p className="text-sm text-[#9ca3af]">No staff in this department yet. Add employees from the Admin page.</p>
+          <p className="text-sm text-[#8b92a8]">No staff in this department yet. Add employees from the Admin page.</p>
         </Panel>
       )}
 
@@ -63,14 +63,14 @@ export function Staff() {
         {filtered.map((emp) => (
           <Panel key={emp.id}>
             <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#181a20]">
-                <Users size={20} className="text-blue-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#111827]">
+                <Users size={20} className="text-indigo-400" />
               </div>
               {isAdmin && (
                 <button
                   type="button"
                   onClick={() => handleRemove(emp.id)}
-                  className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                  className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                   aria-label="Remove employee"
                 >
                   <Trash2 size={14} />
@@ -78,9 +78,9 @@ export function Staff() {
               )}
             </div>
             <h3 className="mt-3 text-lg font-semibold text-white">{emp.name}</h3>
-            <p className="text-sm text-blue-400">{emp.role}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#6b7280]">
-              <span className="rounded-md bg-[#181a20] px-2 py-1">{emp.department}</span>
+            <p className="text-sm text-indigo-400">{emp.role}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#5d6a87]">
+              <span className="rounded-md bg-[#111827] px-2 py-1">{emp.department}</span>
               <span
                 className={`rounded-full px-2 py-1 text-xs font-medium ${
                   emp.status === 'Active'
@@ -94,10 +94,10 @@ export function Staff() {
               </span>
             </div>
             {emp.discordUsername && (
-              <p className="mt-2 text-xs text-[#6b7280]">Discord: @{emp.discordUsername}</p>
+              <p className="mt-2 text-xs text-[#5d6a87]">Discord: @{emp.discordUsername}</p>
             )}
-            {emp.notes && <p className="mt-2 text-xs text-[#9ca3af]">{emp.notes}</p>}
-            <p className="mt-3 text-xs text-[#4b5563]">Joined {emp.joined}</p>
+            {emp.notes && <p className="mt-2 text-xs text-[#8b92a8]">{emp.notes}</p>}
+            <p className="mt-3 text-xs text-[#5d6a87]">Joined {emp.joined}</p>
           </Panel>
         ))}
       </div>

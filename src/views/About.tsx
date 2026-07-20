@@ -33,13 +33,13 @@ export function About() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Utterly Amazing Group LLC</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           One-stop portal for DemocracyCraft and UAG operations.
         </p>
       </header>
 
-      <div className="mb-8 rounded-xl border border-[#1e2028] bg-[#111217] p-6">
-        <p className="text-sm leading-relaxed text-[#9ca3af]">
+      <div className="mb-8 rounded-xl border border-[#1c2335] bg-[#0b0f19] p-6">
+        <p className="text-sm leading-relaxed text-[#8b92a8]">
           Utterly Amazing Group LLC is a holding and services company built for the
           DemocracyCraft political/economy simulation. This portal ties together
           banking, stock exchanges, legal services, real estate, corporate consultancy
@@ -53,11 +53,11 @@ export function About() {
           const Icon = service.icon
           return (
             <Panel key={service.title}>
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[#181a20]">
-                <Icon size={20} className="text-blue-400" />
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[#111827]">
+                <Icon size={20} className="text-indigo-400" />
               </div>
               <div className="text-sm font-semibold text-white">{service.title}</div>
-              <div className="mt-2 text-xs leading-relaxed text-[#9ca3af]">
+              <div className="mt-2 text-xs leading-relaxed text-[#8b92a8]">
                 {service.description}
               </div>
             </Panel>

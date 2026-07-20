@@ -60,7 +60,7 @@ export function Realty() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Real Estate</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Property listings and realty partnerships.
         </p>
       </header>
@@ -74,19 +74,19 @@ export function Realty() {
               placeholder="Name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <input
               type="text"
               placeholder="Location"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             >
               <option>Residential</option>
               <option>Commercial</option>
@@ -98,12 +98,12 @@ export function Realty() {
               placeholder="Value"
               value={form.value}
               onChange={(e) => setForm({ ...form, value: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <select
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             >
               <option>Listed</option>
               <option>Owned</option>
@@ -113,7 +113,7 @@ export function Realty() {
             <button
               type="button"
               onClick={addListing}
-              className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+              className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
             >
               <Plus size={16} />
               Add
@@ -125,16 +125,16 @@ export function Realty() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {listings.map((property) => (
           <Panel key={property.id}>
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[#181a20]">
-              <Building2 size={20} className="text-blue-400" />
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[#111827]">
+              <Building2 size={20} className="text-indigo-400" />
             </div>
             <div className="text-lg font-semibold text-white">{property.name}</div>
-            <div className="mt-1 flex items-center gap-1 text-xs text-[#9ca3af]">
+            <div className="mt-1 flex items-center gap-1 text-xs text-[#8b92a8]">
               <MapPin size={12} />
               {property.location}
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <span className="rounded-md bg-[#181a20] px-2 py-1 text-xs text-[#9ca3af]">
+              <span className="rounded-md bg-[#111827] px-2 py-1 text-xs text-[#8b92a8]">
                 {property.type}
               </span>
               <span className="text-sm font-medium text-white">{property.value}</span>
@@ -148,7 +148,7 @@ export function Realty() {
                 <button
                   type="button"
                   onClick={() => removeListing(property.id)}
-                  className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                  className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                   aria-label="Delete listing"
                 >
                   <Trash2 size={14} />

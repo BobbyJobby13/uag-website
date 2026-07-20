@@ -101,7 +101,7 @@ export function Accounting() {
       <div className="mx-auto max-w-4xl p-8">
         <Panel>
           <h1 className="text-xl font-bold text-white">Access Denied</h1>
-          <p className="mt-2 text-sm text-[#9ca3af]">
+          <p className="mt-2 text-sm text-[#8b92a8]">
             This workspace is for UAG Accounting staff only.
           </p>
         </Panel>
@@ -113,7 +113,7 @@ export function Accounting() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-white">Accounting Department</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Books, ledgers, reports, and AI-assisted bookkeeping.
         </p>
       </header>
@@ -133,8 +133,8 @@ export function Accounting() {
               onClick={() => setActiveTab(t.id as Tab)}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
                 active
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-[#181a20] text-[#9ca3af] hover:bg-[#2a2c35] hover:text-white'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-[#111827] text-[#8b92a8] hover:bg-[#1c2335] hover:text-white'
               }`}
             >
               <Icon size={16} />
@@ -155,12 +155,12 @@ export function Accounting() {
                 value={newBookName}
                 onChange={(e) => setNewBookName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddBook()}
-                className="flex-1 rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="flex-1 rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <button
                 type="button"
                 onClick={handleAddBook}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
               >
                 <Plus size={16} />
                 Create Book
@@ -170,7 +170,7 @@ export function Accounting() {
 
           {books.length === 0 && (
             <Panel className="sm:col-span-2 lg:col-span-3">
-              <p className="text-sm text-[#9ca3af]">No account books yet. Create one above to get started.</p>
+              <p className="text-sm text-[#8b92a8]">No account books yet. Create one above to get started.</p>
             </Panel>
           )}
 
@@ -184,19 +184,19 @@ export function Accounting() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-white">{book.name}</h3>
-                    <p className="text-xs text-[#6b7280]">{book.entries.length} entries</p>
+                    <p className="text-xs text-[#5d6a87]">{book.entries.length} entries</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleRemoveBook(book.id)}
-                    className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                    className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                     aria-label="Delete book"
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
                 <div className="mt-4">
-                  <p className="text-xs text-[#9ca3af]">Net balance</p>
+                  <p className="text-xs text-[#8b92a8]">Net balance</p>
                   <p className={`text-xl font-semibold ${balance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {balance >= 0 ? '+' : ''}
                     {balance.toLocaleString()} DC
@@ -208,7 +208,7 @@ export function Accounting() {
                     setSelectedBookId(book.id)
                     setActiveTab('ledger')
                   }}
-                  className="mt-4 w-full rounded-lg bg-[#2a2c35] py-2 text-sm font-medium text-white transition hover:bg-[#3a3c45]"
+                  className="mt-4 w-full rounded-lg bg-[#1c2335] py-2 text-sm font-medium text-white transition hover:bg-[#2a344e]"
                 >
                   Open Ledger
                 </button>
@@ -228,7 +228,7 @@ export function Accounting() {
               <select
                 value={selectedBookId}
                 onChange={(e) => setSelectedBookId(e.target.value)}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               >
                 {books.length === 0 && <option value="">No books</option>}
                 {books.map((b) => (
@@ -245,26 +245,26 @@ export function Accounting() {
                   type="date"
                   value={entryForm.date}
                   onChange={(e) => setEntryForm({ ...entryForm, date: e.target.value })}
-                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
                 />
                 <input
                   type="text"
                   placeholder="Description"
                   value={entryForm.description}
                   onChange={(e) => setEntryForm({ ...entryForm, description: e.target.value })}
-                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500 sm:col-span-2"
+                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20 sm:col-span-2"
                 />
                 <input
                   type="text"
                   placeholder="Category"
                   value={entryForm.category}
                   onChange={(e) => setEntryForm({ ...entryForm, category: e.target.value })}
-                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
                 />
                 <select
                   value={entryForm.type}
                   onChange={(e) => setEntryForm({ ...entryForm, type: e.target.value as LedgerEntry['type'] })}
-                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
                 >
                   <option value="income">Income</option>
                   <option value="expense">Expense</option>
@@ -274,26 +274,26 @@ export function Accounting() {
                   placeholder="Amount"
                   value={entryForm.amount}
                   onChange={(e) => setEntryForm({ ...entryForm, amount: e.target.value })}
-                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
                 />
                 <button
                   type="button"
                   onClick={handleAddEntry}
-                  className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500 lg:col-span-6"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 lg:col-span-6"
                 >
                   <Plus size={16} />
                   Add Entry
                 </button>
               </div>
             ) : (
-              <p className="text-sm text-[#9ca3af]">Create a book in the Books tab first.</p>
+              <p className="text-sm text-[#8b92a8]">Create a book in the Books tab first.</p>
             )}
           </Panel>
 
           {selectedBook && (
-            <div className="overflow-hidden rounded-xl border border-[#1e2028]">
+            <div className="overflow-hidden rounded-xl border border-[#1c2335]">
               <table className="w-full text-sm">
-                <thead className="bg-[#15161b] text-[#9ca3af]">
+                <thead className="bg-[#111827] text-[#8b92a8]">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Date</th>
                     <th className="px-4 py-3 text-left font-medium">Description</th>
@@ -303,19 +303,19 @@ export function Accounting() {
                     <th className="px-4 py-3 text-right font-medium">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1e2028] bg-[#111217]">
+                <tbody className="divide-y divide-[#1c2335] bg-[#0b0f19]">
                   {selectedBook.entries.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-4 py-4 text-center text-sm text-[#6b7280]">
+                      <td colSpan={6} className="px-4 py-4 text-center text-sm text-[#5d6a87]">
                         No entries yet.
                       </td>
                     </tr>
                   )}
                   {selectedBook.entries.map((entry) => (
-                    <tr key={entry.id} className="transition hover:bg-[#181a20]">
-                      <td className="px-4 py-3 text-[#9ca3af]">{entry.date}</td>
+                    <tr key={entry.id} className="transition hover:bg-[#111827]">
+                      <td className="px-4 py-3 text-[#8b92a8]">{entry.date}</td>
                       <td className="px-4 py-3 text-white">{entry.description}</td>
-                      <td className="px-4 py-3 text-[#9ca3af]">{entry.category || '-'}</td>
+                      <td className="px-4 py-3 text-[#8b92a8]">{entry.category || '-'}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`rounded-full px-2 py-1 text-xs font-medium ${
@@ -334,7 +334,7 @@ export function Accounting() {
                         <button
                           type="button"
                           onClick={() => handleRemoveEntry(entry.id)}
-                          className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                          className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                           aria-label="Delete entry"
                         >
                           <Trash2 size={14} />
@@ -352,15 +352,15 @@ export function Accounting() {
       {activeTab === 'reports' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Panel>
-            <p className="text-xs text-[#9ca3af]">Total Income</p>
+            <p className="text-xs text-[#8b92a8]">Total Income</p>
             <p className="text-2xl font-semibold text-emerald-400">{totals.income.toLocaleString()} DC</p>
           </Panel>
           <Panel>
-            <p className="text-xs text-[#9ca3af]">Total Expenses</p>
+            <p className="text-xs text-[#8b92a8]">Total Expenses</p>
             <p className="text-2xl font-semibold text-rose-400">{totals.expenses.toLocaleString()} DC</p>
           </Panel>
           <Panel>
-            <p className="text-xs text-[#9ca3af]">Net Balance</p>
+            <p className="text-xs text-[#8b92a8]">Net Balance</p>
             <p className={`text-2xl font-semibold ${totals.net >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {totals.net >= 0 ? '+' : ''}
               {totals.net.toLocaleString()} DC
@@ -381,8 +381,8 @@ export function Accounting() {
                 )
                   .sort((a, b) => b[1] - a[1])
                   .map(([category, amount]) => (
-                    <div key={category} className="flex items-center justify-between rounded-lg bg-[#181a20] px-3 py-2">
-                      <span className="text-sm text-[#e5e7eb]">{category}</span>
+                    <div key={category} className="flex items-center justify-between rounded-lg bg-[#111827] px-3 py-2">
+                      <span className="text-sm text-[#e8eaf2]">{category}</span>
                       <span className={`text-sm font-medium ${amount >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {amount >= 0 ? '+' : ''}
                         {amount.toLocaleString()} DC
@@ -391,7 +391,7 @@ export function Accounting() {
                   ))}
               </div>
             ) : (
-              <p className="text-sm text-[#9ca3af]">Select a book to view reports.</p>
+              <p className="text-sm text-[#8b92a8]">Select a book to view reports.</p>
             )}
           </Panel>
         </div>

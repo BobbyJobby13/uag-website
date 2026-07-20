@@ -112,19 +112,24 @@ function AppContent() {
   const View = viewMap[activeNav] ?? (() => <Placeholder title={activeNav} />)
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#0b0c0f] text-[#f3f4f6]">
-      <aside className="flex w-64 flex-shrink-0 flex-col border-r border-[#1e2028] bg-[#111217]">
-        <div className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-sm">
-              U
-            </div>
-            <div className="text-lg font-bold tracking-tight text-white">Utterly Amazing Group</div>
+    <div className="flex h-screen w-full overflow-hidden bg-[#02040a] text-[#e8eaf2] antialiased selection:bg-indigo-500/30">
+      <aside className="relative flex w-72 flex-shrink-0 flex-col border-r border-[#1c2335] bg-[#080b12]/85 backdrop-blur-2xl">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+
+        <div className="border-b border-[#1c2335] p-6">
+          <div className="rounded-xl border border-[#1c2335] bg-[#0b0f19]/80 p-3">
+            <img
+              src="/logo.png"
+              alt="Utterly Amazing Group"
+              className="h-8 w-auto object-contain"
+            />
           </div>
-          <div className="mt-2 text-xs font-medium text-[#6b7280]">DemocracyCraft • UAG LLC</div>
+          <div className="mt-3 text-xs font-semibold tracking-wide text-[#5d6a87] uppercase">
+            UAG Portal
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-4">
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="space-y-1">
             {visibleNavItems.map((item) => {
               const Icon = item.icon
@@ -134,14 +139,17 @@ function AppContent() {
                   <button
                     type="button"
                     onClick={() => setActiveNav(item.label)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                       active
-                        ? 'bg-[#1f2129] text-white shadow-sm'
-                        : 'text-[#9ca3af] hover:bg-[#181a20] hover:text-white'
+                        ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white shadow-lg shadow-indigo-500/15'
+                        : 'text-[#8b92a8] hover:bg-[#131928] hover:text-white'
                     }`}
                   >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
+                    {active && (
+                      <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+                    )}
+                    <Icon size={18} className={active ? 'text-white' : 'text-[#5d6a87] group-hover:text-white transition-colors'} />
+                    <span className="relative z-10">{item.label}</span>
                   </button>
                 </li>
               )
@@ -149,12 +157,13 @@ function AppContent() {
           </ul>
         </nav>
 
-        <div className="border-t border-[#1e2028] p-4">
+        <div className="border-t border-[#1c2335] p-4">
           <DiscordProfile compact />
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="relative flex-1 overflow-y-auto">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500/40 via-cyan-400/40 to-purple-500/40" />
         <View />
       </main>
     </div>

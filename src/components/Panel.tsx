@@ -9,7 +9,7 @@ export function Panel({
 }) {
   return (
     <div
-      className={`rounded-xl border border-[#1e2028] bg-[#111217] p-5 transition hover:border-[#2a2d37] ${className}`}
+      className={`glass-panel rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#3d4b6a] ${className}`}
     >
       {children}
     </div>

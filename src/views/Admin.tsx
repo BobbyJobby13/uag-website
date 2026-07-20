@@ -123,7 +123,7 @@ export function Admin() {
       <div className="mx-auto max-w-6xl p-8">
         <Panel>
           <h1 className="text-xl font-bold text-white">Admin Control Center</h1>
-          <p className="mt-2 text-sm text-[#9ca3af]">
+          <p className="mt-2 text-sm text-[#8b92a8]">
             You do not have access to this page. Log in with a staff or admin Discord account.
           </p>
         </Panel>
@@ -135,7 +135,7 @@ export function Admin() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-white">Admin Control Center</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Manage employees, tasks, service requests, and portal content.
         </p>
       </header>
@@ -157,8 +157,8 @@ export function Admin() {
               onClick={() => setTab(t.id as Tab)}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
                 active
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-[#181a20] text-[#9ca3af] hover:bg-[#2a2c35] hover:text-white'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-[#111827] text-[#8b92a8] hover:bg-[#1c2335] hover:text-white'
               }`}
             >
               <Icon size={16} />
@@ -172,23 +172,23 @@ export function Admin() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Panel>
-              <p className="text-xs text-[#9ca3af]">Total Employees</p>
+              <p className="text-xs text-[#8b92a8]">Total Employees</p>
               <p className="text-2xl font-semibold text-white">{employees.length}</p>
             </Panel>
             <Panel>
-              <p className="text-xs text-[#9ca3af]">Open Requests</p>
+              <p className="text-xs text-[#8b92a8]">Open Requests</p>
               <p className="text-2xl font-semibold text-white">
                 {requests.filter((r) => r.status === 'Open').length}
               </p>
             </Panel>
             <Panel>
-              <p className="text-xs text-[#9ca3af]">Pending Tasks</p>
+              <p className="text-xs text-[#8b92a8]">Pending Tasks</p>
               <p className="text-2xl font-semibold text-white">
                 {tasks.filter((t) => t.status !== 'Done').length}
               </p>
             </Panel>
             <Panel>
-              <p className="text-xs text-[#9ca3af]">Departments</p>
+              <p className="text-xs text-[#8b92a8]">Departments</p>
               <p className="text-2xl font-semibold text-white">{DEPARTMENTS.length}</p>
             </Panel>
           </div>
@@ -198,9 +198,9 @@ export function Admin() {
               <h3 className="mb-4 text-sm font-semibold text-white">Staff by Department</h3>
               <div className="space-y-2">
                 {departmentCounts.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between rounded-lg bg-[#181a20] px-3 py-2">
-                    <span className="text-sm text-[#e5e7eb]">{d.label}</span>
-                    <span className="rounded-md bg-[#2a2c35] px-2 py-1 text-xs font-medium text-white">
+                  <div key={d.id} className="flex items-center justify-between rounded-lg bg-[#111827] px-3 py-2">
+                    <span className="text-sm text-[#e8eaf2]">{d.label}</span>
+                    <span className="rounded-md bg-[#1c2335] px-2 py-1 text-xs font-medium text-white">
                       {d.count}
                     </span>
                   </div>
@@ -214,28 +214,28 @@ export function Admin() {
                 <button
                   type="button"
                   onClick={() => setTab('employees')}
-                  className="rounded-lg bg-[#181a20] px-3 py-2 text-left text-sm text-white transition hover:bg-[#2a2c35]"
+                  className="rounded-lg bg-[#111827] px-3 py-2 text-left text-sm text-white transition hover:bg-[#1c2335]"
                 >
                   + Add Employee
                 </button>
                 <button
                   type="button"
                   onClick={() => setTab('tasks')}
-                  className="rounded-lg bg-[#181a20] px-3 py-2 text-left text-sm text-white transition hover:bg-[#2a2c35]"
+                  className="rounded-lg bg-[#111827] px-3 py-2 text-left text-sm text-white transition hover:bg-[#1c2335]"
                 >
                   + Add Task
                 </button>
                 <button
                   type="button"
                   onClick={() => setTab('requests')}
-                  className="rounded-lg bg-[#181a20] px-3 py-2 text-left text-sm text-white transition hover:bg-[#2a2c35]"
+                  className="rounded-lg bg-[#111827] px-3 py-2 text-left text-sm text-white transition hover:bg-[#1c2335]"
                 >
                   View Requests
                 </button>
                 <button
                   type="button"
                   onClick={() => setTab('content')}
-                  className="rounded-lg bg-[#181a20] px-3 py-2 text-left text-sm text-white transition hover:bg-[#2a2c35]"
+                  className="rounded-lg bg-[#111827] px-3 py-2 text-left text-sm text-white transition hover:bg-[#1c2335]"
                 >
                   Manage Content
                 </button>
@@ -246,17 +246,17 @@ export function Admin() {
           <Panel>
             <h3 className="mb-4 text-sm font-semibold text-white">UAG Operations Action Plan</h3>
             {tasks.filter((t) => t.status !== 'Done').length === 0 ? (
-              <p className="text-sm text-[#9ca3af]">No pending tasks. Great job.</p>
+              <p className="text-sm text-[#8b92a8]">No pending tasks. Great job.</p>
             ) : (
               <ul className="space-y-2">
                 {tasks
                   .filter((t) => t.status !== 'Done')
                   .slice(0, 10)
                   .map((t) => (
-                    <li key={t.id} className="flex items-center justify-between rounded-lg bg-[#181a20] px-3 py-2">
+                    <li key={t.id} className="flex items-center justify-between rounded-lg bg-[#111827] px-3 py-2">
                       <div>
                         <p className="text-sm text-white">{t.title}</p>
-                        <p className="text-xs text-[#6b7280]">
+                        <p className="text-xs text-[#5d6a87]">
                           {t.department} {t.role ? `• ${t.role}` : ''} • {t.status}
                         </p>
                       </div>
@@ -285,14 +285,14 @@ export function Admin() {
                 placeholder="Full name"
                 value={employeeForm.name}
                 onChange={(e) => setEmployeeForm({ ...employeeForm, name: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <input
                 type="text"
                 placeholder="Discord username"
                 value={employeeForm.discordUsername}
                 onChange={(e) => setEmployeeForm({ ...employeeForm, discordUsername: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <select
                 value={employeeForm.department}
@@ -301,7 +301,7 @@ export function Admin() {
                   const roles = rolesForDepartment(dept)
                   setEmployeeForm({ ...employeeForm, department: dept, role: roles[0] || '' })
                 }}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               >
                 {DEPARTMENTS.map((d) => (
                   <option key={d.id} value={d.id}>
@@ -312,7 +312,7 @@ export function Admin() {
               <select
                 value={employeeForm.role}
                 onChange={(e) => setEmployeeForm({ ...employeeForm, role: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               >
                 {rolesForDepartment(employeeForm.department).map((r) => (
                   <option key={r} value={r}>
@@ -323,7 +323,7 @@ export function Admin() {
               <select
                 value={employeeForm.status}
                 onChange={(e) => setEmployeeForm({ ...employeeForm, status: e.target.value as Employee['status'] })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               >
                 <option>Active</option>
                 <option>On Leave</option>
@@ -332,7 +332,7 @@ export function Admin() {
               <button
                 type="button"
                 onClick={handleAddEmployee}
-                className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+                className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
               >
                 <Plus size={16} />
                 Add
@@ -340,9 +340,9 @@ export function Admin() {
             </div>
           </Panel>
 
-          <div className="overflow-hidden rounded-xl border border-[#1e2028]">
+          <div className="overflow-hidden rounded-xl border border-[#1c2335]">
             <table className="w-full text-sm">
-              <thead className="bg-[#15161b] text-[#9ca3af]">
+              <thead className="bg-[#111827] text-[#8b92a8]">
                 <tr>
                   <th className="px-5 py-3 text-left font-medium">Name</th>
                   <th className="px-5 py-3 text-left font-medium">Department</th>
@@ -352,24 +352,24 @@ export function Admin() {
                   <th className="px-5 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e2028] bg-[#111217]">
+              <tbody className="divide-y divide-[#1c2335] bg-[#0b0f19]">
                 {employees.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-5 py-4 text-center text-sm text-[#6b7280]">
+                    <td colSpan={6} className="px-5 py-4 text-center text-sm text-[#5d6a87]">
                       No employees yet. Add one above.
                     </td>
                   </tr>
                 )}
                 {employees.map((emp) => (
-                  <tr key={emp.id} className="transition hover:bg-[#181a20]">
+                  <tr key={emp.id} className="transition hover:bg-[#111827]">
                     <td className="px-5 py-4 text-white">
                       {emp.name}
                       {emp.discordUsername && (
-                        <span className="ml-2 text-xs text-[#6b7280]">@{emp.discordUsername}</span>
+                        <span className="ml-2 text-xs text-[#5d6a87]">@{emp.discordUsername}</span>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-[#9ca3af]">{emp.department}</td>
-                    <td className="px-5 py-4 text-[#9ca3af]">{emp.role}</td>
+                    <td className="px-5 py-4 text-[#8b92a8]">{emp.department}</td>
+                    <td className="px-5 py-4 text-[#8b92a8]">{emp.role}</td>
                     <td className="px-5 py-4">
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-medium ${
@@ -383,7 +383,7 @@ export function Admin() {
                         {emp.status}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-[#9ca3af]">{emp.joined}</td>
+                    <td className="px-5 py-4 text-[#8b92a8]">{emp.joined}</td>
                     <td className="px-5 py-4 text-right">
                       <button
                         type="button"
@@ -391,7 +391,7 @@ export function Admin() {
                           removeEmployee(emp.id)
                           setEmployeesState(getEmployees())
                         }}
-                        className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                        className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                         aria-label="Delete employee"
                       >
                         <Trash2 size={14} />
@@ -415,12 +415,12 @@ export function Admin() {
                 placeholder="Task title"
                 value={taskForm.title}
                 onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <select
                 value={taskForm.department}
                 onChange={(e) => setTaskForm({ ...taskForm, department: e.target.value as Department | 'All' })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               >
                 <option value="All">All Departments</option>
                 {DEPARTMENTS.map((d) => (
@@ -434,18 +434,18 @@ export function Admin() {
                 placeholder="Role (optional)"
                 value={taskForm.role}
                 onChange={(e) => setTaskForm({ ...taskForm, role: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <input
                 type="date"
                 value={taskForm.due}
                 onChange={(e) => setTaskForm({ ...taskForm, due: e.target.value })}
-                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               <button
                 type="button"
                 onClick={handleAddTask}
-                className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+                className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
               >
                 <Plus size={16} />
                 Add
@@ -459,10 +459,10 @@ export function Admin() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-white">{t.title}</h3>
-                    <p className="mt-1 text-xs text-[#6b7280]">
+                    <p className="mt-1 text-xs text-[#5d6a87]">
                       {t.department} {t.role ? `• ${t.role}` : ''} {t.due ? `• Due ${t.due}` : ''}
                     </p>
-                    {t.notes && <p className="mt-2 text-xs text-[#9ca3af]">{t.notes}</p>}
+                    {t.notes && <p className="mt-2 text-xs text-[#8b92a8]">{t.notes}</p>}
                   </div>
                   <button
                     type="button"
@@ -470,7 +470,7 @@ export function Admin() {
                       removeTask(t.id)
                       setTasksState(getTasks())
                     }}
-                    className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                    className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                     aria-label="Delete task"
                   >
                     <Trash2 size={14} />
@@ -482,7 +482,7 @@ export function Admin() {
                       t.status === 'Done'
                         ? 'bg-emerald-500/10 text-emerald-400'
                         : t.status === 'In Progress'
-                        ? 'bg-blue-500/10 text-blue-400'
+                        ? 'bg-indigo-500/10 text-indigo-400'
                         : 'bg-amber-500/10 text-amber-400'
                     }`}
                   >
@@ -491,7 +491,7 @@ export function Admin() {
                   <button
                     type="button"
                     onClick={() => toggleTaskStatus(t)}
-                    className="rounded-md bg-[#2a2c35] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#3a3c45]"
+                    className="rounded-md bg-[#1c2335] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#2a344e]"
                   >
                     {t.status === 'Done' ? 'Reopen' : 'Advance'}
                   </button>
@@ -514,8 +514,8 @@ export function Admin() {
                   onClick={() => setRequestFilter(f as 'All' | Department)}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition ${
                     requestFilter === f
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-[#181a20] text-[#9ca3af] hover:text-white'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-[#111827] text-[#8b92a8] hover:text-white'
                   }`}
                 >
                   {f}
@@ -527,7 +527,7 @@ export function Admin() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {filteredRequests.length === 0 && (
               <Panel>
-                <p className="text-sm text-[#9ca3af]">No requests in this category.</p>
+                <p className="text-sm text-[#8b92a8]">No requests in this category.</p>
               </Panel>
             )}
             {filteredRequests.map((req) => (
@@ -535,7 +535,7 @@ export function Admin() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-white">{req.serviceType} Request</h3>
-                    <p className="mt-1 text-xs text-[#6b7280]">
+                    <p className="mt-1 text-xs text-[#5d6a87]">
                       From {req.clientName} • {new Date(req.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -545,14 +545,14 @@ export function Admin() {
                       removeRequest(req.id)
                       setRequestsState(getRequests())
                     }}
-                    className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                    className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
-                <p className="mt-3 text-sm text-[#e5e7eb]">{req.description}</p>
+                <p className="mt-3 text-sm text-[#e8eaf2]">{req.description}</p>
                 {req.contact && (
-                  <p className="mt-2 text-xs text-[#9ca3af]">Contact: {req.contact}</p>
+                  <p className="mt-2 text-xs text-[#8b92a8]">Contact: {req.contact}</p>
                 )}
                 <div className="mt-4 flex items-center gap-2">
                   <span
@@ -560,8 +560,8 @@ export function Admin() {
                       req.status === 'Open'
                         ? 'bg-emerald-500/10 text-emerald-400'
                         : req.status === 'In Progress'
-                        ? 'bg-blue-500/10 text-blue-400'
-                        : 'bg-[#2a2c35] text-[#9ca3af]'
+                        ? 'bg-indigo-500/10 text-indigo-400'
+                        : 'bg-[#1c2335] text-[#8b92a8]'
                     }`}
                   >
                     {req.status}
@@ -574,7 +574,7 @@ export function Admin() {
                       )
                       saveRequests(list)
                     }}
-                    className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-2 py-1 text-xs text-white outline-none focus:border-blue-500"
+                    className="rounded-lg border border-[#1c2335] bg-[#111827] px-2 py-1 text-xs text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
                   >
                     <option value="">Assign to...</option>
                     {employees.map((e) => (
@@ -591,7 +591,7 @@ export function Admin() {
                       const list = requests.map((r) => (r.id === req.id ? { ...r, status: next } : r))
                       saveRequests(list)
                     }}
-                    className="rounded-md bg-[#2a2c35] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#3a3c45]"
+                    className="rounded-md bg-[#1c2335] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#2a344e]"
                   >
                     Advance
                   </button>
@@ -606,23 +606,23 @@ export function Admin() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Panel>
             <h3 className="text-sm font-semibold text-white">Jobs Portal</h3>
-            <p className="mt-1 text-xs text-[#9ca3af]">Post, edit, and review open positions.</p>
-            <p className="mt-3 text-xs text-[#6b7280]">Managed from the Jobs page.</p>
+            <p className="mt-1 text-xs text-[#8b92a8]">Post, edit, and review open positions.</p>
+            <p className="mt-3 text-xs text-[#5d6a87]">Managed from the Jobs page.</p>
           </Panel>
           <Panel>
             <h3 className="text-sm font-semibold text-white">Realty Listings</h3>
-            <p className="mt-1 text-xs text-[#9ca3af]">Add or remove property listings.</p>
-            <p className="mt-3 text-xs text-[#6b7280]">Managed from the Real Estate page.</p>
+            <p className="mt-1 text-xs text-[#8b92a8]">Add or remove property listings.</p>
+            <p className="mt-3 text-xs text-[#5d6a87]">Managed from the Real Estate page.</p>
           </Panel>
           <Panel>
             <h3 className="text-sm font-semibold text-white">Staff Chat</h3>
-            <p className="mt-1 text-xs text-[#9ca3af]">Employee communication channel.</p>
-            <p className="mt-3 text-xs text-[#6b7280]">Open the Staff Chat page.</p>
+            <p className="mt-1 text-xs text-[#8b92a8]">Employee communication channel.</p>
+            <p className="mt-3 text-xs text-[#5d6a87]">Open the Staff Chat page.</p>
           </Panel>
           <Panel>
             <h3 className="text-sm font-semibold text-white">Lawyers & Investigators</h3>
-            <p className="mt-1 text-xs text-[#9ca3af]">Client intake and case workspaces.</p>
-            <p className="mt-3 text-xs text-[#6b7280]">Managed from Lawyers and Investigators pages.</p>
+            <p className="mt-1 text-xs text-[#8b92a8]">Client intake and case workspaces.</p>
+            <p className="mt-3 text-xs text-[#5d6a87]">Managed from Lawyers and Investigators pages.</p>
           </Panel>
         </div>
       )}

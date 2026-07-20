@@ -90,7 +90,7 @@ export function Investigators() {
       <div className="mx-auto max-w-4xl p-8">
         <Panel>
           <h1 className="text-xl font-bold text-white">Access Denied</h1>
-          <p className="mt-2 text-sm text-[#9ca3af]">
+          <p className="mt-2 text-sm text-[#8b92a8]">
             This workspace is for UAG Investigations staff only.
           </p>
         </Panel>
@@ -102,7 +102,7 @@ export function Investigators() {
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white">Investigations Department</h1>
-        <p className="mt-1 text-sm text-[#9ca3af]">
+        <p className="mt-1 text-sm text-[#8b92a8]">
           Case notes, evidence tracking, and AI-assisted summaries.
         </p>
       </header>
@@ -110,17 +110,17 @@ export function Investigators() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel className="lg:col-span-1">
           <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
-            <Users size={16} className="text-blue-400" />
+            <Users size={16} className="text-indigo-400" />
             Investigators
           </div>
           {staff.length === 0 ? (
-            <p className="text-sm text-[#9ca3af]">No investigators listed. Assign roles in Role Manager.</p>
+            <p className="text-sm text-[#8b92a8]">No investigators listed. Assign roles in Role Manager.</p>
           ) : (
             <ul className="space-y-2">
               {staff.map((emp) => (
-                <li key={emp.id} className="rounded-lg bg-[#181a20] px-3 py-2">
+                <li key={emp.id} className="rounded-lg bg-[#111827] px-3 py-2">
                   <p className="text-sm font-medium text-white">{emp.name}</p>
-                  <p className="text-xs text-[#6b7280]">
+                  <p className="text-xs text-[#5d6a87]">
                     {emp.role} • {emp.status}
                   </p>
                 </li>
@@ -131,7 +131,7 @@ export function Investigators() {
 
         <Panel className="lg:col-span-2">
           <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
-            <Search size={16} className="text-blue-400" />
+            <Search size={16} className="text-indigo-400" />
             New Case
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -140,27 +140,27 @@ export function Investigators() {
               placeholder="Subject / client name"
               value={form.clientName}
               onChange={(e) => setForm({ ...form, clientName: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <input
               type="text"
               placeholder="Discord / contact"
               value={form.contact}
               onChange={(e) => setForm({ ...form, contact: e.target.value })}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
             />
             <textarea
               placeholder="Case facts, leads, and context..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500 sm:col-span-2"
+              className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20 sm:col-span-2"
             />
           </div>
           <button
             type="button"
             onClick={createCase}
-            className="mt-4 flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+            className="mt-4 flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
           >
             <Plus size={16} />
             Create Case
@@ -173,7 +173,7 @@ export function Investigators() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {filteredRequests.length === 0 && (
             <Panel>
-              <p className="text-sm text-[#9ca3af]">No cases yet. Create one above.</p>
+              <p className="text-sm text-[#8b92a8]">No cases yet. Create one above.</p>
             </Panel>
           )}
           {filteredRequests.map((req) => (
@@ -181,7 +181,7 @@ export function Investigators() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-white">{req.clientName}</h3>
-                  <p className="text-xs text-[#6b7280]">
+                  <p className="text-xs text-[#5d6a87]">
                     {new Date(req.createdAt).toLocaleString()} {req.contact ? `• ${req.contact}` : ''}
                   </p>
                 </div>
@@ -200,7 +200,7 @@ export function Investigators() {
                     <button
                       type="button"
                       onClick={() => handleRemove(req)}
-                      className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                      className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
                       aria-label="Delete case"
                     >
                       <Trash2 size={14} />
@@ -208,19 +208,19 @@ export function Investigators() {
                   )}
                 </div>
               </div>
-              <p className="mt-3 text-sm text-[#e5e7eb]">{req.description}</p>
-              {req.assignedTo && <p className="mt-2 text-xs text-blue-400">Assigned: {req.assignedTo}</p>}
+              <p className="mt-3 text-sm text-[#e8eaf2]">{req.description}</p>
+              {req.assignedTo && <p className="mt-2 text-xs text-indigo-400">Assigned: {req.assignedTo}</p>}
               <textarea
                 value={req.notes || ''}
                 onChange={(e) => updateNotes(req, e.target.value)}
                 placeholder="Investigation notes..."
                 rows={2}
-                className="mt-3 w-full rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-xs text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                className="mt-3 w-full rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-xs text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
               />
               {req.caseFile && (
-                <div className="mt-3 rounded-lg bg-[#181a20] p-3">
+                <div className="mt-3 rounded-lg bg-[#111827] p-3">
                   <p className="text-xs font-semibold text-purple-400">AI Summary</p>
-                  <p className="mt-1 whitespace-pre-wrap text-xs text-[#e5e7eb]">{req.caseFile}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-xs text-[#e8eaf2]">{req.caseFile}</p>
                 </div>
               )}
               <div className="mt-4 flex items-center gap-2">
@@ -229,8 +229,8 @@ export function Investigators() {
                     req.status === 'Open'
                       ? 'bg-emerald-500/10 text-emerald-400'
                       : req.status === 'In Progress'
-                      ? 'bg-blue-500/10 text-blue-400'
-                      : 'bg-[#2a2c35] text-[#9ca3af]'
+                      ? 'bg-indigo-500/10 text-indigo-400'
+                      : 'bg-[#1c2335] text-[#8b92a8]'
                   }`}
                 >
                   {req.status}
@@ -238,7 +238,7 @@ export function Investigators() {
                 <button
                   type="button"
                   onClick={() => advance(req)}
-                  className="rounded-md bg-[#2a2c35] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#3a3c45]"
+                  className="rounded-md bg-[#1c2335] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#2a344e]"
                 >
                   {req.status === 'Closed' ? 'Reopen' : 'Advance'}
                 </button>
