@@ -102,12 +102,9 @@ const viewMap: Record<string, () => ReactNode> = {
 
 const staffOnlyNavLabels = new Set([
   'Admin',
-  'Accounting',
   'Staff',
   'Staff Chat',
   'Role Manager',
-  'Lawyers',
-  'Investigators',
 ])
 
 function AppContent() {

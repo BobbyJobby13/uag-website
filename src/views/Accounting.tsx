@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Banknote, BookOpen, Building2, Copy, Download, ExternalLink, FileSpreadsheet, FileText, Globe, Plus, Printer, Receipt, RefreshCw, Save, Trash2, TrendingUp, UserPlus, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
+import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import {
   addAccountBook,
@@ -441,14 +442,11 @@ export function Accounting() {
 
   if (!allowed) {
     return (
-      <div className="mx-auto max-w-4xl p-8">
-        <Panel>
-          <h1 className="text-xl font-bold text-[#e8eaf2]">Access Denied</h1>
-          <p className="mt-2 text-sm text-[#8b92a8]">
-            This workspace is for UAG Accounting staff or invited members only.
-          </p>
-        </Panel>
-      </div>
+      <ServiceRequestForm
+        serviceType="Accounting"
+        title="Request an Accountant"
+        descriptionPlaceholder="Describe the accounting or bookkeeping service you need..."
+      />
     )
   }
 

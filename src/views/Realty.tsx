@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Building2, MapPin, Home, Plus, Trash2 } from '../icons'
 import { Panel } from '../components/Panel'
+import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { getRequests, hasDepartment, updateRequest, type ServiceRequest } from '../lib/data'
 
 type Listing = {
   id: string
@@ -21,15 +23,27 @@ const defaultListings: Listing[] = [
 const STORAGE_KEY = 'uag_realty_listings'
 
 export function Realty() {
-  const { canEditRealty } = useDiscordAuth()
+  const { isAdmin, userName, canEditRealty } = useDiscordAuth()
+  const isRealtyStaff = isAdmin || hasDepartment(userName, 'Real Estate')
   const [listings, setListings] = useState<Listing[]>(defaultListings)
   const [form, setForm] = useState({ name: '', location: '', type: 'Residential', value: '', status: 'Listed' })
+  const [requests, setRequests] = useState<ServiceRequest[]>([])
+
+  const refreshRequests = () => setRequests(getRequests().filter((r) => r.serviceType === 'Real Estate'))
+
+  const advanceRequest = (req: ServiceRequest) => {
+    const next: ServiceRequest['status'] =
+      req.status === 'Open' ? 'In Progress' : req.status === 'In Progress' ? 'Closed' : 'Open'
+    updateRequest(req.id, { status: next })
+    refreshRequests()
+  }
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) setListings(JSON.parse(raw))
     } catch {}
+    refreshRequests()
   }, [])
 
   useEffect(() => {
@@ -64,6 +78,12 @@ export function Realty() {
           Property listings and realty partnerships.
         </p>
       </header>
+
+      <ServiceRequestForm
+        serviceType="Real Estate"
+        title="Request a Realtor"
+        descriptionPlaceholder="Describe the property you are looking for, your budget, and how to contact you..."
+      />
 
       {canEditRealty && (
         <Panel className="mb-6">
@@ -122,6 +142,51 @@ export function Realty() {
         </Panel>
       )}
 
+      {isRealtyStaff && (
+        <div className="mb-8">
+          <h2 className="mb-4 text-lg font-semibold text-white">Realty Requests</h2>
+          {requests.length === 0 && (
+            <Panel>
+              <p className="text-sm text-[#8b92a8]">No realty requests yet.</p>
+            </Panel>
+          )}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {requests.map((req) => (
+              <Panel key={req.id}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-white">{req.clientName}</h3>
+                    <p className="text-xs text-[#5d6a87]">
+                      {new Date(req.createdAt).toLocaleString()} {req.contact ? `• ${req.contact}` : ''}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-medium ${
+                      req.status === 'Open'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : req.status === 'In Progress'
+                        ? 'bg-indigo-500/10 text-indigo-400'
+                        : 'bg-[#1c2335] text-[#8b92a8]'
+                    }`}
+                  >
+                    {req.status}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-[#e8eaf2]">{req.description}</p>
+                <button
+                  type="button"
+                  onClick={() => advanceRequest(req)}
+                  className="mt-4 rounded-md bg-[#1c2335] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#2a344e]"
+                >
+                  {req.status === 'Closed' ? 'Reopen' : 'Advance'}
+                </button>
+              </Panel>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <h2 className="mb-4 text-lg font-semibold text-white">Property Listings</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {listings.map((property) => (
           <Panel key={property.id}>

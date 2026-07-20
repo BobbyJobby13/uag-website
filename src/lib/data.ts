@@ -1,4 +1,4 @@
-export type Department = 'Accounting' | 'Legal' | 'Investigations' | 'Construction' | 'Management'
+export type Department = 'Accounting' | 'Legal' | 'Investigations' | 'Construction' | 'Management' | 'Real Estate'
 
 export const DEPARTMENTS: { id: Department; label: string; roles: string[] }[] = [
   {
@@ -26,6 +26,11 @@ export const DEPARTMENTS: { id: Department; label: string; roles: string[] }[] =
     label: 'Management',
     roles: ['Admin', 'Department Manager'],
   },
+  {
+    id: 'Real Estate',
+    label: 'Real Estate',
+    roles: ['Realtor', 'Real Estate Agent'],
+  },
 ]
 
 export type Role =
@@ -42,6 +47,8 @@ export type Role =
   | 'Department Manager'
   | 'Building Crew'
   | 'Admin'
+  | 'Realtor'
+  | 'Real Estate Agent'
 
 export interface Employee {
   id: string

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Bot, Gavel, Plus, Trash2, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
+import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import {
   addRequest,
@@ -87,14 +88,11 @@ export function Lawyers() {
 
   if (!allowed) {
     return (
-      <div className="mx-auto max-w-4xl p-8">
-        <Panel>
-          <h1 className="text-xl font-bold text-white">Access Denied</h1>
-          <p className="mt-2 text-sm text-[#8b92a8]">
-            This workspace is for UAG Legal staff only.
-          </p>
-        </Panel>
-      </div>
+      <ServiceRequestForm
+        serviceType={SERVICE_TYPE}
+        title="Request a Lawyer"
+        descriptionPlaceholder="Describe your legal issue, the parties involved, and what you need..."
+      />
     )
   }
 
