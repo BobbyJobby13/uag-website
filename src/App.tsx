@@ -1,6 +1,6 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 import {
-  Home,
+  Home as HomeIcon,
   Info,
   Landmark,
   Building2,
@@ -34,8 +34,8 @@ import {
   Banking,
   Capital,
   Consultancy,
-  Dashboard,
   Discord,
+  Home,
   Investigators,
   Jobs,
   Lawyers,
@@ -54,7 +54,7 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Home', icon: Home },
+  { label: 'Home', icon: HomeIcon },
   { label: 'Admin', icon: Shield },
   { label: 'About Us', icon: Info },
   { label: 'Banking', icon: Landmark },
@@ -81,7 +81,7 @@ const navItems: NavItem[] = [
 ]
 
 const viewMap: Record<string, () => ReactNode> = {
-  Home: Dashboard,
+  Home,
   Admin,
   'About Us': About,
   Banking,
@@ -100,13 +100,23 @@ const viewMap: Record<string, () => ReactNode> = {
   'Discord Portal': Discord,
 }
 
+const staffOnlyNavLabels = new Set([
+  'Admin',
+  'Accounting',
+  'Staff',
+  'Staff Chat',
+  'Role Manager',
+  'Lawyers',
+  'Investigators',
+])
+
 function AppContent() {
   const [activeNav, setActiveNav] = useState('Home')
   const { userName, isAdmin } = useDiscordAuth()
-  const canViewAdmin = isAdmin || isStaff(userName)
+  const canViewStaff = isAdmin || isStaff(userName)
 
   const visibleNavItems = navItems.filter(
-    (item) => item.label !== 'Admin' || canViewAdmin
+    (item) => !staffOnlyNavLabels.has(item.label) || canViewStaff
   )
 
   const View = viewMap[activeNav] ?? (() => <Placeholder title={activeNav} />)
