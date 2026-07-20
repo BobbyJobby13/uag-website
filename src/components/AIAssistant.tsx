@@ -15,7 +15,7 @@ const systemNames: Record<string, string> = {
   accounting: 'UAG Accounting Assistant',
   legal: 'UAG Legal Assistant',
   investigations: 'UAG Investigations Assistant',
-  general: 'UAG Assistant',
+  general: 'UAG AI Assistant',
 }
 
 export function AIAssistant({
