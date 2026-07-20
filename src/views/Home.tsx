@@ -27,7 +27,7 @@ const divisions = [
   { label: 'Construction', icon: Wrench, desc: 'Project oversight, crew management, and builds.' },
   { label: 'Casino & Entertainment', icon: Dice5, desc: 'Gaming, events, and hospitality operations.' },
   { label: 'Commodities', icon: BarChart3, desc: 'Resource trading, market tracking, and warehousing.' },
-  { label: 'Stock Exchanges', icon: DollarSign, desc: 'Capital markets and portfolio management.' },
+  { label: 'TSE', icon: DollarSign, desc: 'The Stock Exchange — capital markets and portfolio management.' },
   { label: 'Dev Services', icon: Code, desc: 'Custom development, integrations, and technical consulting.' },
   { label: 'Corporate Consultancy', icon: Users, desc: 'Strategy, mergers, and executive advisory.' },
   { label: 'DC Store', icon: ShoppingBag, desc: 'In-game commerce and merchandise.' },

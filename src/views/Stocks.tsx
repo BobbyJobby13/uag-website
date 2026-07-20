@@ -3,7 +3,7 @@ import { Panel } from '../components/Panel'
 
 const exchanges = [
   { name: 'NER', fullName: 'New Economic Reserve', region: 'North America', status: 'Live', url: '' },
-  { name: 'TSE', fullName: 'Transatlantic Stock Exchange', region: 'Europe / Asia', status: 'Live', url: 'https://market.installe.us/login' },
+  { name: 'TSE', fullName: 'The Stock Exchange', region: 'DemocracyCraft', status: 'Live', url: 'https://market.installe.us/login' },
 ]
 
 const tickers = [
@@ -22,9 +22,9 @@ export function Stocks() {
   return (
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Stock Exchanges</h1>
+        <h1 className="text-2xl font-bold text-white">TSE</h1>
         <p className="mt-1 text-sm text-[#8b92a8]">
-          Live access to NER, TSE and related market positions.
+          The Stock Exchange — live access to NER, TSE and related market positions.
         </p>
       </header>
 
