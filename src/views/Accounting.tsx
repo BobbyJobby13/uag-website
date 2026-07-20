@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Banknote, BookOpen, Download, FileSpreadsheet, FileText, Plus, Printer, Receipt, Trash2, TrendingUp, UserPlus, Users } from '../icons'
+import { Banknote, BookOpen, Building2, Copy, Download, ExternalLink, FileSpreadsheet, FileText, Globe, Plus, Printer, Receipt, RefreshCw, Save, Trash2, TrendingUp, UserPlus, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
@@ -15,6 +15,8 @@ import {
   removeAccountBookMember,
   removeInvoice,
   removeLedgerEntry,
+  seedUAGCapitalBooks,
+  updateAccountBook,
   updateInvoice,
   type AccountBook,
   type Invoice,
@@ -34,6 +36,10 @@ export function Accounting() {
   const [newBookName, setNewBookName] = useState('')
   const [newMemberName, setNewMemberName] = useState('')
   const [expandedBookId, setExpandedBookId] = useState<string | null>(null)
+  const [economyBookId, setEconomyBookId] = useState<string | null>(null)
+  const [webhookSecrets, setWebhookSecrets] = useState<Record<string, string>>({})
+  const [masterToken, setMasterToken] = useState('')
+  const [economyStatus, setEconomyStatus] = useState<Record<string, string>>({})
   const [entryForm, setEntryForm] = useState({
     date: new Date().toISOString().split('T')[0],
     description: '',
@@ -242,6 +248,105 @@ export function Accounting() {
     refreshBooks()
   }
 
+  const ensureWebhookToken = (book: AccountBook) => {
+    if (book.economyWebhookToken) return book.economyWebhookToken
+    const token = uid()
+    updateAccountBook(book.id, { economyWebhookToken: token })
+    refreshBooks()
+    return token
+  }
+
+  const getWebhookUrl = (book: AccountBook) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    if (!book.economyWebhookToken) return `${origin}/api/economy/webhooks/${book.id}`
+    return `${origin}/api/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`
+  }
+
+  const handleOpenEconomy = (book: AccountBook) => {
+    if (economyBookId === book.id) {
+      setEconomyBookId(null)
+      return
+    }
+    ensureWebhookToken(book)
+    setEconomyBookId(book.id)
+  }
+
+  const copyToClipboard = async (text: string, bookId: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setEconomyStatus((prev) => ({ ...prev, [bookId]: `${label} copied` }))
+      setTimeout(() => setEconomyStatus((prev) => ({ ...prev, [bookId]: '' })), 2000)
+    } catch {
+      setEconomyStatus((prev) => ({ ...prev, [bookId]: 'Copy failed' }))
+    }
+  }
+
+  const handleSaveWebhookSecret = async (book: AccountBook) => {
+    const secret = webhookSecrets[book.id]?.trim()
+    if (!secret) return
+    if (!masterToken.trim()) {
+      setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Master token required' }))
+      return
+    }
+    setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Saving…' }))
+    const token = ensureWebhookToken(book)
+    try {
+      const res = await fetch(`/api/economy/webhooks/${book.id}/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, secret, masterToken: masterToken.trim() }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Webhook configured' }))
+        setWebhookSecrets((prev) => ({ ...prev, [book.id]: '' }))
+      } else {
+        setEconomyStatus((prev) => ({ ...prev, [book.id]: data.error || 'Config failed' }))
+      }
+    } catch {
+      setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Config failed' }))
+    }
+  }
+
+  const handleSyncWebhookTransactions = async (book: AccountBook) => {
+    if (!book.economyWebhookToken) {
+      setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Generate token first' }))
+      return
+    }
+    setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Syncing…' }))
+    try {
+      const res = await fetch(`/api/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`)
+      const data = await res.json()
+      if (!res.ok) {
+        setEconomyStatus((prev) => ({ ...prev, [book.id]: data.error || 'Sync failed' }))
+        return
+      }
+      const transactions = data.transactions || []
+      const existingIds = new Set(book.entries.map((e) => e.externalId).filter(Boolean))
+      let added = 0
+      for (const payload of transactions) {
+        const tx = payload?.transaction
+        if (!tx) continue
+        const externalId = String(tx.txnId ?? tx.postingId ?? payload.deliveryId)
+        if (existingIds.has(externalId)) continue
+        const signedAmount = Number(tx.amount) || 0
+        addLedgerEntry(book.id, {
+          date: tx.settledAt ? tx.settledAt.split('T')[0] : new Date().toISOString().split('T')[0],
+          description: tx.message || tx.memo || `${tx.pluginSystem || 'DC Economy'} transaction`,
+          category: tx.pluginSystem || tx.memo || 'DC Economy',
+          type: signedAmount >= 0 ? 'income' : 'expense',
+          amount: Math.abs(signedAmount),
+          externalId,
+        })
+        added++
+      }
+      refreshBooks()
+      setEconomyStatus((prev) => ({ ...prev, [book.id]: added ? `Imported ${added} transactions` : 'Up to date' }))
+    } catch {
+      setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Sync failed' }))
+    }
+  }
+
   const handleAddEntry = () => {
     if (!selectedBook || !canEditBook(selectedBook) || !entryForm.description.trim() || !entryForm.amount) return
     addLedgerEntry(selectedBook.id, {
@@ -406,6 +511,20 @@ export function Accounting() {
                 Create Book
               </button>
             </div>
+            {(isAdmin || isAccountingStaff) && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!userName) return
+                  seedUAGCapitalBooks(userName)
+                  refreshBooks()
+                }}
+                className="mt-3 flex items-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#8b92a8] transition hover:bg-[#1c2335] hover:text-[#e8eaf2]"
+              >
+                <Building2 size={16} />
+                Seed UAG Capital companies
+              </button>
+            )}
             <p className="mt-2 text-xs text-[#5d6a87]">
               You will be the owner and can invite others to view or edit the ledger.
             </p>
@@ -510,6 +629,91 @@ export function Accounting() {
                         <UserPlus size={14} />
                         Add
                       </button>
+                    </div>
+                  )}
+
+                  {canManageBook(book) && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEconomy(book)}
+                      className="mt-3 flex items-center gap-2 text-xs font-medium text-indigo-400 transition hover:text-indigo-300"
+                    >
+                      {economyBookId === book.id ? 'Close economy link' : 'Link DC Economy'}
+                    </button>
+                  )}
+
+                  {economyBookId === book.id && canManageBook(book) && (
+                    <div className="mt-3 space-y-3 rounded-lg border border-[#1c2335] bg-[#0b0f19] p-3">
+                      {book.website && (
+                        <a
+                          href={book.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-2 text-xs text-[#8b92a8] transition hover:text-indigo-400"
+                        >
+                          <Globe size={14} />
+                          Company website
+                          <ExternalLink size={12} />
+                        </a>
+                      )}
+                      <div>
+                        <p className="mb-1 text-xs text-[#5d6a87]">DC Economy webhook URL</p>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 truncate rounded bg-[#111827] px-2 py-1 text-xs text-[#8b92a8]">
+                            {getWebhookUrl(book)}
+                          </code>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(getWebhookUrl(book), book.id, 'Webhook URL')}
+                            className="rounded bg-[#111827] p-1.5 text-[#8b92a8] transition hover:text-[#e8eaf2]"
+                            aria-label="Copy webhook URL"
+                          >
+                            <Copy size={14} />
+                          </button>
+                        </div>
+                        <p className="mt-1 text-[10px] text-[#5d6a87]">
+                          Paste this URL into My data → Webhooks on economy.democracycraft.net.
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <input
+                          type="password"
+                          placeholder="DC Economy signing secret"
+                          value={webhookSecrets[book.id] || ''}
+                          onChange={(e) =>
+                            setWebhookSecrets((prev) => ({ ...prev, [book.id]: e.target.value }))
+                          }
+                          className={inputClass}
+                        />
+                        <input
+                          type="password"
+                          placeholder="Economy webhook master token"
+                          value={masterToken}
+                          onChange={(e) => setMasterToken(e.target.value)}
+                          className={inputClass}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleSaveWebhookSecret(book)}
+                          disabled={!webhookSecrets[book.id]?.trim() || !masterToken.trim()}
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                        >
+                          <Save size={14} />
+                          Save signing secret
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleSyncWebhookTransactions(book)}
+                        disabled={!book.economyWebhookToken}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#111827] px-3 py-2 text-xs font-medium text-[#e8eaf2] transition hover:bg-[#1c2335] disabled:opacity-50"
+                      >
+                        <RefreshCw size={14} />
+                        Sync bank statements
+                      </button>
+                      {economyStatus[book.id] && (
+                        <p className="text-xs text-[#8b92a8]">{economyStatus[book.id]}</p>
+                      )}
                     </div>
                   )}
                 </div>

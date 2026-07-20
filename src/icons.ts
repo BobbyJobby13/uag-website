@@ -10,6 +10,7 @@ import Building from 'lucide-react/dist/esm/icons/building.mjs'
 import Building2 from 'lucide-react/dist/esm/icons/building-2.mjs'
 import CheckCircle from 'lucide-react/dist/esm/icons/check-circle.mjs'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down.mjs'
+import Copy from 'lucide-react/dist/esm/icons/copy.mjs'
 import Code from 'lucide-react/dist/esm/icons/code.mjs'
 import CreditCard from 'lucide-react/dist/esm/icons/credit-card.mjs'
 import DollarSign from 'lucide-react/dist/esm/icons/dollar-sign.mjs'
@@ -64,6 +65,7 @@ export {
   Building2,
   CheckCircle,
   ChevronDown,
+  Copy,
   Code,
   CreditCard,
   Dice5,

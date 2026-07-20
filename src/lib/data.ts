@@ -92,6 +92,7 @@ export interface LedgerEntry {
   category: string
   type: 'income' | 'expense'
   amount: number
+  externalId?: string
   createdAt: string
 }
 
@@ -101,6 +102,10 @@ export interface AccountBook {
   owner?: string
   members?: string[]
   entries: LedgerEntry[]
+  website?: string
+  economyAccountId?: string
+  economyWebhookToken?: string
+  economyApiToken?: string
   createdAt: string
 }
 
@@ -379,6 +384,33 @@ export function addAccountBook(name: string, owner: string): AccountBook {
 export function updateAccountBook(id: string, partial: Partial<AccountBook>) {
   const list = getAccountBooks().map((b) => (b.id === id ? { ...b, ...partial } : b))
   setAccountBooks(list)
+}
+
+export const UAG_CAPITAL_COMPANIES: Partial<AccountBook>[] = [
+  { name: 'Two Guys Realty' },
+  { name: 'Barclays Bank' },
+  { name: 'De Ryder' },
+  { name: 'UAGInvestigations' },
+  { name: 'UAGCapital' },
+  { name: 'Utterly Amazing Group LLC' },
+  { name: 'UAGNewsNetwork', website: 'https://uag-news-network.base44.app/' },
+]
+
+export function seedUAGCapitalBooks(owner: string) {
+  const books = getAccountBooks()
+  const created: AccountBook[] = []
+  for (const template of UAG_CAPITAL_COMPANIES) {
+    const name = template.name?.trim()
+    if (!name) continue
+    const exists = books.some((b) => b.name.toLowerCase() === name.toLowerCase())
+    if (exists) continue
+    const book = addAccountBook(name, owner)
+    if (template.website) {
+      updateAccountBook(book.id, { website: template.website })
+    }
+    created.push(book)
+  }
+  return created
 }
 
 export function removeAccountBook(id: string) {
