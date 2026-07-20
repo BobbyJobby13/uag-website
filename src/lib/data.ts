@@ -102,6 +102,27 @@ export interface AccountBook {
   createdAt: string
 }
 
+export interface Bank {
+  id: string
+  name: string
+  code: string
+  region: string
+  status: 'Connected' | 'Pending' | 'Disabled'
+  apiKey?: string
+  apiEndpoint?: string
+  createdAt: string
+}
+
+export interface BankConnection {
+  id: string
+  userName: string
+  bankId: string
+  accountName?: string
+  accountNumber?: string
+  apiKey?: string
+  createdAt: string
+}
+
 function uid() {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID()
@@ -131,7 +152,16 @@ const KEYS = {
   tasks: 'uag_tasks',
   chat: 'uag_staff_chat',
   accountingBooks: 'uag_accounting_books',
+  banks: 'uag_banks',
+  bankConnections: 'uag_bank_connections',
 }
+
+const defaultBanks: Bank[] = [
+  { id: 'rvr', name: 'RVR Bank', code: 'RVR', region: 'Internal', status: 'Connected', createdAt: new Date().toISOString() },
+  { id: 'barclays', name: 'Barclays', code: 'BARC', region: 'UK', status: 'Connected', createdAt: new Date().toISOString() },
+  { id: 'rbr', name: 'RBR', code: 'RBR', region: 'EU', status: 'Connected', createdAt: new Date().toISOString() },
+  { id: 'chase', name: 'Chase', code: 'CHAS', region: 'US', status: 'Connected', createdAt: new Date().toISOString() },
+]
 
 const defaultTasks: Task[] = [
   { id: uid(), title: 'Onboard new Head Accountant and configure accounting workflows', department: 'Accounting', role: 'Head Accountant', status: 'Pending' },
@@ -274,6 +304,12 @@ export function isStaff(name: string | null | undefined): boolean {
   return !!getEmployeeByName(name)
 }
 
+export function isBankAdmin(name: string | null | undefined): boolean {
+  if (!name) return false
+  const target = name.toLowerCase().trim()
+  return target === 'brzzzes'
+}
+
 export function getAccountBooks(): AccountBook[] {
   return getJSON<AccountBook[]>(KEYS.accountingBooks, [])
 }
@@ -321,4 +357,57 @@ export function removeLedgerEntry(bookId: string, entryId: string) {
     b.id === bookId ? { ...b, entries: b.entries.filter((e) => e.id !== entryId) } : b
   )
   setAccountBooks(list)
+}
+
+export function getBanks(): Bank[] {
+  let banks = getJSON<Bank[]>(KEYS.banks, [])
+  if (!banks.length) {
+    banks = defaultBanks
+    setBanks(banks)
+  }
+  return banks
+}
+
+export function setBanks(banks: Bank[]) {
+  setJSON(KEYS.banks, banks)
+}
+
+export function addBank(bank: Omit<Bank, 'id' | 'createdAt'>): Bank {
+  const b: Bank = { ...bank, id: uid(), createdAt: new Date().toISOString() }
+  const list = [...getBanks(), b]
+  setBanks(list)
+  return b
+}
+
+export function updateBank(id: string, partial: Partial<Bank>) {
+  const list = getBanks().map((b) => (b.id === id ? { ...b, ...partial } : b))
+  setBanks(list)
+}
+
+export function removeBank(id: string) {
+  setBanks(getBanks().filter((b) => b.id !== id))
+}
+
+export function getBankConnections(): BankConnection[] {
+  return getJSON<BankConnection[]>(KEYS.bankConnections, [])
+}
+
+export function getBankConnectionsForUser(userName: string | null | undefined): BankConnection[] {
+  if (!userName) return []
+  return getBankConnections().filter((c) => c.userName.toLowerCase() === userName.toLowerCase())
+}
+
+export function setBankConnections(connections: BankConnection[]) {
+  setJSON(KEYS.bankConnections, connections)
+}
+
+export function addBankConnection(connection: Omit<BankConnection, 'id' | 'createdAt'>): BankConnection {
+  const c: BankConnection = { ...connection, id: uid(), createdAt: new Date().toISOString() }
+  const list = [...getBankConnections(), c]
+  setBankConnections(list)
+  return c
+}
+
+export function removeBankConnection(id: string) {
+  setBankConnections(getBankConnections().filter((c) => c.id !== id))
 }

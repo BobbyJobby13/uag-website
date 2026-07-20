@@ -1,21 +1,18 @@
-import { useState } from 'react'
-import { Landmark, Building, ArrowRightLeft, RefreshCw } from '../icons'
+import { useEffect, useState } from 'react'
+import { Landmark, Building, ArrowRightLeft, RefreshCw, Plus, Trash2, Wallet, Settings } from '../icons'
 import { Panel } from '../components/Panel'
-
-type Bank = {
-  id: string
-  name: string
-  code: string
-  status: 'Connected' | 'Pending'
-  region: string
-}
-
-const banks: Bank[] = [
-  { id: 'rvr', name: 'RVR Bank', code: 'RVR', status: 'Connected', region: 'Internal' },
-  { id: 'barclays', name: 'Barclays', code: 'BARC', status: 'Connected', region: 'UK' },
-  { id: 'rbr', name: 'RBR', code: 'RBR', status: 'Connected', region: 'EU' },
-  { id: 'chase', name: 'Chase', code: 'CHAS', status: 'Connected', region: 'US' },
-]
+import { useDiscordAuth } from '../context/DiscordAuth'
+import {
+  getBanks,
+  addBank,
+  removeBank,
+  getBankConnectionsForUser,
+  addBankConnection,
+  removeBankConnection,
+  isBankAdmin,
+  type Bank,
+  type BankConnection,
+} from '../lib/data'
 
 type Transfer = {
   id: string
@@ -31,15 +28,99 @@ const initialTransfers: Transfer[] = [
 ]
 
 export function Banking() {
-  const [fromBank, setFromBank] = useState(banks[0].id)
-  const [toBank, setToBank] = useState(banks[1].id)
+  const { userName, isAdmin } = useDiscordAuth()
+  const canManage = isAdmin || isBankAdmin(userName)
+
+  const [banks, setBanks] = useState<Bank[]>([])
+  const [myConnections, setMyConnections] = useState<BankConnection[]>([])
+  const [fromBank, setFromBank] = useState('')
+  const [toBank, setToBank] = useState('')
   const [amount, setAmount] = useState('')
   const [transfers, setTransfers] = useState<Transfer[]>(initialTransfers)
 
+  const [bankForm, setBankForm] = useState({
+    name: '',
+    code: '',
+    region: '',
+    apiEndpoint: '',
+    apiKey: '',
+    status: 'Connected' as Bank['status'],
+  })
+
+  const [connectionForm, setConnectionForm] = useState({
+    bankId: '',
+    accountName: '',
+    accountNumber: '',
+    apiKey: '',
+  })
+
+  useEffect(() => {
+    const loadedBanks = getBanks()
+    setBanks(loadedBanks)
+    if (loadedBanks[0]) {
+      setFromBank((prev) => (prev && loadedBanks.some((b) => b.id === prev) ? prev : loadedBanks[0].id))
+      setToBank((prev) =>
+        prev && loadedBanks.some((b) => b.id === prev)
+          ? prev
+          : loadedBanks[1]?.id || loadedBanks[0].id
+      )
+    }
+    setMyConnections(getBankConnectionsForUser(userName))
+  }, [userName])
+
+  const refreshBanks = () => {
+    const list = getBanks()
+    setBanks(list)
+    if (list.length) {
+      setFromBank((prev) => (list.some((b) => b.id === prev) ? prev : list[0].id))
+      setToBank((prev) => (list.some((b) => b.id === prev) ? prev : list[1]?.id || list[0].id))
+    }
+  }
+
+  const refreshConnections = () => {
+    setMyConnections(getBankConnectionsForUser(userName))
+  }
+
+  const handleAddBank = () => {
+    if (!bankForm.name.trim() || !bankForm.code.trim()) return
+    addBank({
+      name: bankForm.name.trim(),
+      code: bankForm.code.trim().toUpperCase(),
+      region: bankForm.region.trim() || 'Global',
+      status: bankForm.status,
+      apiKey: bankForm.apiKey.trim() || undefined,
+      apiEndpoint: bankForm.apiEndpoint.trim() || undefined,
+    })
+    refreshBanks()
+    setBankForm({ name: '', code: '', region: '', apiEndpoint: '', apiKey: '', status: 'Connected' })
+  }
+
+  const handleDeleteBank = (id: string) => {
+    removeBank(id)
+    refreshBanks()
+    refreshConnections()
+  }
+
+  const handleAddConnection = () => {
+    if (!userName || !connectionForm.bankId.trim()) return
+    const bank = banks.find((b) => b.id === connectionForm.bankId)
+    if (!bank) return
+    addBankConnection({
+      userName,
+      bankId: bank.id,
+      accountName: connectionForm.accountName.trim() || undefined,
+      accountNumber: connectionForm.accountNumber.trim() || undefined,
+      apiKey: connectionForm.apiKey.trim() || undefined,
+    })
+    refreshConnections()
+    setConnectionForm({ bankId: '', accountName: '', accountNumber: '', apiKey: '' })
+  }
+
   const handleTransfer = () => {
     if (!amount || isNaN(Number(amount))) return
-    const from = banks.find((b) => b.id === fromBank) || banks[0]
-    const to = banks.find((b) => b.id === toBank) || banks[1]
+    const from = banks.find((b) => b.id === fromBank)
+    const to = banks.find((b) => b.id === toBank)
+    if (!from || !to) return
     const newTransfer: Transfer = {
       id: Math.random().toString(36).slice(2),
       from: from.name,
@@ -51,6 +132,8 @@ export function Banking() {
     setTransfers((prev) => [newTransfer, ...prev])
     setAmount('')
   }
+
+  const bankById = (id: string) => banks.find((b) => b.id === id)
 
   return (
     <div className="mx-auto max-w-6xl p-8">
@@ -84,11 +167,34 @@ export function Banking() {
                     </div>
                   </div>
                 </div>
-                <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
-                  {bank.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-medium ${
+                      bank.status === 'Connected'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : bank.status === 'Pending'
+                        ? 'bg-amber-500/10 text-amber-400'
+                        : 'bg-rose-500/10 text-rose-400'
+                    }`}
+                  >
+                    {bank.status}
+                  </span>
+                  {canManage && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteBank(bank.id)}
+                      className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                      aria-label="Delete bank"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
+            {banks.length === 0 && (
+              <p className="text-sm text-[#6b7280]">No banks configured yet.</p>
+            )}
           </div>
         </Panel>
 
@@ -149,6 +255,167 @@ export function Banking() {
           </div>
         </Panel>
       </div>
+
+      {canManage && (
+        <section className="mt-8">
+          <div className="mb-4 flex items-center gap-2">
+            <Settings size={18} className="text-blue-400" />
+            <h2 className="text-lg font-semibold text-white">Manage Banks</h2>
+          </div>
+          <Panel>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+              <input
+                type="text"
+                placeholder="Bank name"
+                value={bankForm.name}
+                onChange={(e) => setBankForm({ ...bankForm, name: e.target.value })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="Code"
+                value={bankForm.code}
+                onChange={(e) => setBankForm({ ...bankForm, code: e.target.value })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="Region"
+                value={bankForm.region}
+                onChange={(e) => setBankForm({ ...bankForm, region: e.target.value })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="API endpoint (optional)"
+                value={bankForm.apiEndpoint}
+                onChange={(e) => setBankForm({ ...bankForm, apiEndpoint: e.target.value })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              />
+              <select
+                value={bankForm.status}
+                onChange={(e) => setBankForm({ ...bankForm, status: e.target.value as Bank['status'] })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+              >
+                <option value="Connected">Connected</option>
+                <option value="Pending">Pending</option>
+                <option value="Disabled">Disabled</option>
+              </select>
+              <input
+                type="password"
+                placeholder="Bank API key"
+                value={bankForm.apiKey}
+                onChange={(e) => setBankForm({ ...bankForm, apiKey: e.target.value })}
+                className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+              />
+              <div className="lg:col-span-6 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAddBank}
+                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+                >
+                  <Plus size={16} />
+                  Add Bank
+                </button>
+              </div>
+            </div>
+          </Panel>
+        </section>
+      )}
+
+      <section className="mt-8">
+        <div className="mb-4 flex items-center gap-2">
+          <Wallet size={18} className="text-blue-400" />
+          <h2 className="text-lg font-semibold text-white">My Bank Accounts</h2>
+        </div>
+        {!userName ? (
+          <Panel>
+            <p className="text-sm text-[#9ca3af]">Log in with Discord to connect your bank accounts.</p>
+          </Panel>
+        ) : (
+          <div className="space-y-6">
+            <Panel>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <select
+                  value={connectionForm.bankId}
+                  onChange={(e) => setConnectionForm({ ...connectionForm, bankId: e.target.value })}
+                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                >
+                  <option value="">Select a bank</option>
+                  {banks.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Account name"
+                  value={connectionForm.accountName}
+                  onChange={(e) => setConnectionForm({ ...connectionForm, accountName: e.target.value })}
+                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Account number"
+                  value={connectionForm.accountNumber}
+                  onChange={(e) => setConnectionForm({ ...connectionForm, accountNumber: e.target.value })}
+                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                />
+                <input
+                  type="password"
+                  placeholder="Your API key"
+                  value={connectionForm.apiKey}
+                  onChange={(e) => setConnectionForm({ ...connectionForm, apiKey: e.target.value })}
+                  className="rounded-lg border border-[#2a2c35] bg-[#181a20] px-3 py-2 text-sm text-white outline-none placeholder:text-[#6b7280] focus:border-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddConnection}
+                  disabled={!connectionForm.bankId}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500 disabled:opacity-50"
+                >
+                  <Plus size={16} />
+                  Connect Account
+                </button>
+              </div>
+            </Panel>
+
+            <div className="space-y-3">
+              {myConnections.map((conn) => {
+                const bank = bankById(conn.bankId)
+                return (
+                  <div
+                    key={conn.id}
+                    className="flex items-center justify-between rounded-lg border border-[#2a2c35] bg-[#181a20] p-3"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-white">{bank?.name || 'Unknown bank'}</div>
+                      <div className="text-xs text-[#6b7280]">
+                        {conn.accountName || 'Account'} · {conn.accountNumber || 'No number'}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeBankConnection(conn.id)
+                        refreshConnections()
+                      }}
+                      className="rounded-md p-1.5 text-[#9ca3af] transition hover:bg-rose-500/10 hover:text-rose-400"
+                      aria-label="Remove connection"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )
+              })}
+              {myConnections.length === 0 && (
+                <p className="text-sm text-[#6b7280]">You have not connected any bank accounts.</p>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
 
       <section className="mt-8">
         <h2 className="mb-4 text-lg font-semibold text-white">Recent Transfers</h2>

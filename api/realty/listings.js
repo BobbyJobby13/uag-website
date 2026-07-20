@@ -1,6 +1,6 @@
-const { json } = require('../_utils')
+import { json } from '../_utils.js'
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.statusCode = 204
     return res.end()
