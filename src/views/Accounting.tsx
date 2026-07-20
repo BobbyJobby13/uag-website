@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Banknote, BookOpen, Plus, Trash2, TrendingUp } from '../icons'
+import { Banknote, BookOpen, Plus, Trash2, TrendingUp, UserPlus, Users } from '../icons'
 import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
 import { useDiscordAuth } from '../context/DiscordAuth'
 import {
   addAccountBook,
+  addAccountBookMember,
   addLedgerEntry,
-  getAccountBooks,
+  getAccessibleAccountBooks,
   hasDepartment,
   removeAccountBook,
+  removeAccountBookMember,
   removeLedgerEntry,
   type AccountBook,
   type LedgerEntry,
@@ -18,11 +20,14 @@ type Tab = 'books' | 'ledger' | 'reports'
 
 export function Accounting() {
   const { userName, isAdmin } = useDiscordAuth()
-  const allowed = isAdmin || hasDepartment(userName, 'Accounting')
+  const isAccountingStaff = hasDepartment(userName, 'Accounting')
+
   const [books, setBooks] = useState<AccountBook[]>([])
   const [activeTab, setActiveTab] = useState<Tab>('books')
   const [selectedBookId, setSelectedBookId] = useState<string>('')
   const [newBookName, setNewBookName] = useState('')
+  const [newMemberName, setNewMemberName] = useState('')
+  const [expandedBookId, setExpandedBookId] = useState<string | null>(null)
   const [entryForm, setEntryForm] = useState({
     date: new Date().toISOString().split('T')[0],
     description: '',
@@ -31,13 +36,19 @@ export function Accounting() {
     amount: '',
   })
 
-  useEffect(() => {
-    const loaded = getAccountBooks()
+  const refreshBooks = () => {
+    const loaded = getAccessibleAccountBooks(userName, isAdmin)
     setBooks(loaded)
-    if (loaded.length && !selectedBookId) {
-      setSelectedBookId(loaded[0].id)
+    if (selectedBookId && !loaded.find((b) => b.id === selectedBookId)) {
+      setSelectedBookId(loaded[0]?.id || '')
     }
-  }, [])
+  }
+
+  useEffect(() => {
+    refreshBooks()
+  }, [userName, isAdmin])
+
+  const allowed = isAdmin || isAccountingStaff || getAccessibleAccountBooks(userName, isAdmin).length > 0
 
   const selectedBook = books.find((b) => b.id === selectedBookId)
 
@@ -52,18 +63,47 @@ export function Accounting() {
     return { income, expenses, net: income - expenses }
   }, [selectedBook])
 
+  const canEditBook = (book: AccountBook | undefined) => {
+    if (!book || !userName) return false
+    if (isAdmin || book.owner === userName) return true
+    return (book.members || []).some((m) => m.toLowerCase().trim() === userName.toLowerCase().trim())
+  }
+
+  const canManageBook = (book: AccountBook | undefined) => {
+    if (!book || !userName) return false
+    return isAdmin || book.owner === userName
+  }
+
   const handleAddBook = () => {
     const name = newBookName.trim()
-    if (!name) return
-    const book = addAccountBook(name)
-    setBooks(getAccountBooks())
+    if (!name || !userName) return
+    const book = addAccountBook(name, userName)
+    refreshBooks()
     setSelectedBookId(book.id)
     setNewBookName('')
     setActiveTab('ledger')
   }
 
+  const handleRemoveBook = (id: string) => {
+    removeAccountBook(id)
+    refreshBooks()
+  }
+
+  const handleAddMember = (bookId: string) => {
+    const name = newMemberName.trim()
+    if (!name) return
+    addAccountBookMember(bookId, name)
+    refreshBooks()
+    setNewMemberName('')
+  }
+
+  const handleRemoveMember = (bookId: string, member: string) => {
+    removeAccountBookMember(bookId, member)
+    refreshBooks()
+  }
+
   const handleAddEntry = () => {
-    if (!selectedBook || !entryForm.description.trim() || !entryForm.amount) return
+    if (!selectedBook || !canEditBook(selectedBook) || !entryForm.description.trim() || !entryForm.amount) return
     addLedgerEntry(selectedBook.id, {
       date: entryForm.date,
       description: entryForm.description.trim(),
@@ -71,7 +111,7 @@ export function Accounting() {
       type: entryForm.type,
       amount: Number(entryForm.amount),
     })
-    setBooks(getAccountBooks())
+    refreshBooks()
     setEntryForm({
       date: new Date().toISOString().split('T')[0],
       description: '',
@@ -81,28 +121,22 @@ export function Accounting() {
     })
   }
 
-  const handleRemoveBook = (id: string) => {
-    removeAccountBook(id)
-    const updated = getAccountBooks()
-    setBooks(updated)
-    if (selectedBookId === id) {
-      setSelectedBookId(updated[0]?.id || '')
-    }
+  const handleRemoveEntry = (entryId: string) => {
+    if (!selectedBook || !canEditBook(selectedBook)) return
+    removeLedgerEntry(selectedBook.id, entryId)
+    refreshBooks()
   }
 
-  const handleRemoveEntry = (entryId: string) => {
-    if (!selectedBook) return
-    removeLedgerEntry(selectedBook.id, entryId)
-    setBooks(getAccountBooks())
-  }
+  const inputClass =
+    'rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-[#e8eaf2] outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20'
 
   if (!allowed) {
     return (
       <div className="mx-auto max-w-4xl p-8">
         <Panel>
-          <h1 className="text-xl font-bold text-white">Access Denied</h1>
+          <h1 className="text-xl font-bold text-[#e8eaf2]">Access Denied</h1>
           <p className="mt-2 text-sm text-[#8b92a8]">
-            This workspace is for UAG Accounting staff only.
+            This workspace is for UAG Accounting staff or invited members only.
           </p>
         </Panel>
       </div>
@@ -112,15 +146,15 @@ export function Accounting() {
   return (
     <div className="mx-auto max-w-6xl p-8">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Accounting Department</h1>
+        <h1 className="text-2xl font-bold text-[#e8eaf2]">Accounting Department</h1>
         <p className="mt-1 text-sm text-[#8b92a8]">
-          Books, ledgers, reports, and AI-assisted bookkeeping.
+          Multi-company books, ledgers, reports, and AI-assisted bookkeeping.
         </p>
       </header>
 
       <div className="mb-6 flex flex-wrap gap-2">
         {[
-          { id: 'books', label: 'Books', icon: BookOpen },
+          { id: 'books', label: 'Companies / Books', icon: BookOpen },
           { id: 'ledger', label: 'Ledger', icon: Banknote },
           { id: 'reports', label: 'Reports', icon: TrendingUp },
         ].map((t) => {
@@ -134,7 +168,7 @@ export function Accounting() {
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
                 active
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-[#111827] text-[#8b92a8] hover:bg-[#1c2335] hover:text-white'
+                  : 'bg-[#111827] text-[#8b92a8] hover:bg-[#1c2335] hover:text-[#e8eaf2]'
               }`}
             >
               <Icon size={16} />
@@ -147,30 +181,34 @@ export function Accounting() {
       {activeTab === 'books' && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Panel className="sm:col-span-2 lg:col-span-3">
-            <h2 className="mb-4 text-sm font-semibold text-white">Create a new book</h2>
+            <h2 className="mb-4 text-sm font-semibold text-[#e8eaf2]">Create a new company book</h2>
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="Book name (e.g. UAG Operating Account)"
+                placeholder="Company / book name (e.g. UAG Operating Account)"
                 value={newBookName}
                 onChange={(e) => setNewBookName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddBook()}
-                className="flex-1 rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                className={`${inputClass} flex-1`}
               />
               <button
                 type="button"
                 onClick={handleAddBook}
-                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+                disabled={!newBookName.trim() || !userName}
+                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
               >
                 <Plus size={16} />
                 Create Book
               </button>
             </div>
+            <p className="mt-2 text-xs text-[#5d6a87]">
+              You will be the owner and can invite others to view or edit the ledger.
+            </p>
           </Panel>
 
           {books.length === 0 && (
             <Panel className="sm:col-span-2 lg:col-span-3">
-              <p className="text-sm text-[#8b92a8]">No account books yet. Create one above to get started.</p>
+              <p className="text-sm text-[#8b92a8]">No company books yet. Create one above to get started.</p>
             </Panel>
           )}
 
@@ -179,21 +217,27 @@ export function Accounting() {
               (acc, e) => (e.type === 'income' ? acc + e.amount : acc - e.amount),
               0
             )
+            const isExpanded = expandedBookId === book.id
             return (
-              <Panel key={book.id}>
+              <Panel key={book.id} className="flex flex-col">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-white">{book.name}</h3>
-                    <p className="text-xs text-[#5d6a87]">{book.entries.length} entries</p>
+                    <h3 className="text-lg font-semibold text-[#e8eaf2]">{book.name}</h3>
+                    <p className="text-xs text-[#5d6a87]">
+                      {book.entries.length} entries • {book.members?.length || 1} member
+                      {(book.members?.length || 1) > 1 ? 's' : ''}
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveBook(book.id)}
-                    className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
-                    aria-label="Delete book"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  {canManageBook(book) && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveBook(book.id)}
+                      className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
+                      aria-label="Delete book"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </div>
                 <div className="mt-4">
                   <p className="text-xs text-[#8b92a8]">Net balance</p>
@@ -202,13 +246,76 @@ export function Accounting() {
                     {balance.toLocaleString()} DC
                   </p>
                 </div>
+
+                <div className="mt-4 rounded-lg border border-[#1c2335] bg-[#0b0f19] p-3">
+                  <div className="flex items-center gap-2 text-xs text-[#5d6a87]">
+                    <Users size={14} />
+                    <span>Owner:</span>
+                    <span className="text-[#8b92a8]">{book.owner || 'Unknown'}</span>
+                  </div>
+                  {book.members && book.members.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {book.members.map((m) => (
+                        <span
+                          key={m}
+                          className="inline-flex items-center gap-1 rounded-full bg-[#1c2335] px-2 py-0.5 text-xs text-[#8b92a8]"
+                        >
+                          {m}
+                          {canManageBook(book) && m.toLowerCase().trim() !== (book.owner || '').toLowerCase().trim() && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveMember(book.id, m)}
+                              className="text-[#5d6a87] transition hover:text-rose-400"
+                              aria-label={`Remove ${m}`}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {canManageBook(book) && (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedBookId(isExpanded ? null : book.id)}
+                      className="mt-3 text-xs font-medium text-indigo-400 transition hover:text-indigo-300"
+                    >
+                      {isExpanded ? 'Close people manager' : 'Manage people'}
+                    </button>
+                  )}
+
+                  {isExpanded && canManageBook(book) && (
+                    <div className="mt-3 flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Discord username to invite"
+                        value={newMemberName}
+                        onChange={(e) => setNewMemberName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddMember(book.id)}
+                        className={inputClass}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleAddMember(book.id)}
+                        disabled={!newMemberName.trim()}
+                        className="flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                      >
+                        <UserPlus size={14} />
+                        Add
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedBookId(book.id)
                     setActiveTab('ledger')
                   }}
-                  className="mt-4 w-full rounded-lg bg-[#1c2335] py-2 text-sm font-medium text-white transition hover:bg-[#2a344e]"
+                  className="mt-4 w-full rounded-lg bg-[#1c2335] py-2 text-sm font-medium text-[#e8eaf2] transition hover:bg-[#2a344e]"
                 >
                   Open Ledger
                 </button>
@@ -222,13 +329,13 @@ export function Accounting() {
         <div className="space-y-6">
           <Panel>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-white">
+              <h2 className="text-sm font-semibold text-[#e8eaf2]">
                 {selectedBook ? selectedBook.name : 'Select a book'}
               </h2>
               <select
                 value={selectedBookId}
                 onChange={(e) => setSelectedBookId(e.target.value)}
-                className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                className={inputClass}
               >
                 {books.length === 0 && <option value="">No books</option>}
                 {books.map((b) => (
@@ -239,32 +346,32 @@ export function Accounting() {
               </select>
             </div>
 
-            {selectedBook ? (
+            {selectedBook && canEditBook(selectedBook) ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
                 <input
                   type="date"
                   value={entryForm.date}
                   onChange={(e) => setEntryForm({ ...entryForm, date: e.target.value })}
-                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                  className={inputClass}
                 />
                 <input
                   type="text"
                   placeholder="Description"
                   value={entryForm.description}
                   onChange={(e) => setEntryForm({ ...entryForm, description: e.target.value })}
-                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20 sm:col-span-2"
+                  className={`${inputClass} sm:col-span-2`}
                 />
                 <input
                   type="text"
                   placeholder="Category"
                   value={entryForm.category}
                   onChange={(e) => setEntryForm({ ...entryForm, category: e.target.value })}
-                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                  className={inputClass}
                 />
                 <select
                   value={entryForm.type}
                   onChange={(e) => setEntryForm({ ...entryForm, type: e.target.value as LedgerEntry['type'] })}
-                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                  className={inputClass}
                 >
                   <option value="income">Income</option>
                   <option value="expense">Expense</option>
@@ -274,7 +381,7 @@ export function Accounting() {
                   placeholder="Amount"
                   value={entryForm.amount}
                   onChange={(e) => setEntryForm({ ...entryForm, amount: e.target.value })}
-                  className="rounded-lg border border-[#1c2335] bg-[#111827] px-3 py-2 text-sm text-white outline-none placeholder:text-[#5d6a87] focus:border-indigo-500/80 focus:ring-1 focus:ring-indigo-500/20"
+                  className={inputClass}
                 />
                 <button
                   type="button"
@@ -285,8 +392,10 @@ export function Accounting() {
                   Add Entry
                 </button>
               </div>
+            ) : selectedBook ? (
+              <p className="text-sm text-[#8b92a8]">You can view this ledger. Only members can add or remove entries.</p>
             ) : (
-              <p className="text-sm text-[#8b92a8]">Create a book in the Books tab first.</p>
+              <p className="text-sm text-[#8b92a8]">Create a company book in the Companies / Books tab first.</p>
             )}
           </Panel>
 
@@ -314,7 +423,7 @@ export function Accounting() {
                   {selectedBook.entries.map((entry) => (
                     <tr key={entry.id} className="transition hover:bg-[#111827]">
                       <td className="px-4 py-3 text-[#8b92a8]">{entry.date}</td>
-                      <td className="px-4 py-3 text-white">{entry.description}</td>
+                      <td className="px-4 py-3 text-[#e8eaf2]">{entry.description}</td>
                       <td className="px-4 py-3 text-[#8b92a8]">{entry.category || '-'}</td>
                       <td className="px-4 py-3">
                         <span
@@ -327,18 +436,20 @@ export function Accounting() {
                           {entry.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right text-white">
+                      <td className="px-4 py-3 text-right text-[#e8eaf2]">
                         {entry.amount.toLocaleString()} DC
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveEntry(entry.id)}
-                          className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
-                          aria-label="Delete entry"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        {canEditBook(selectedBook) && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveEntry(entry.id)}
+                            className="rounded-md p-1.5 text-[#8b92a8] transition hover:bg-rose-500/10 hover:text-rose-400"
+                            aria-label="Delete entry"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -368,7 +479,7 @@ export function Accounting() {
           </Panel>
 
           <Panel className="sm:col-span-2 lg:col-span-3">
-            <h3 className="mb-4 text-sm font-semibold text-white">Entries by Category</h3>
+            <h3 className="mb-4 text-sm font-semibold text-[#e8eaf2]">Entries by Category</h3>
             {selectedBook ? (
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {Object.entries(

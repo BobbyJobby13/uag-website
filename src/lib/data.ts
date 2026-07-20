@@ -98,6 +98,8 @@ export interface LedgerEntry {
 export interface AccountBook {
   id: string
   name: string
+  owner?: string
+  members?: string[]
   entries: LedgerEntry[]
   createdAt: string
 }
@@ -318,8 +320,29 @@ export function setAccountBooks(books: AccountBook[]) {
   setJSON(KEYS.accountingBooks, books)
 }
 
-export function addAccountBook(name: string): AccountBook {
-  const book: AccountBook = { id: uid(), name: name.trim(), entries: [], createdAt: new Date().toISOString() }
+export function getAccessibleAccountBooks(
+  userName: string | null | undefined,
+  isAdmin = false
+): AccountBook[] {
+  return getAccountBooks().filter((b) => {
+    if (isAdmin) return true
+    const target = (userName || '').toLowerCase().trim()
+    if (!target) return false
+    if (b.owner && b.owner.toLowerCase().trim() === target) return true
+    return (b.members || []).some((m) => m.toLowerCase().trim() === target)
+  })
+}
+
+export function addAccountBook(name: string, owner: string): AccountBook {
+  const ownerTrimmed = owner.trim()
+  const book: AccountBook = {
+    id: uid(),
+    name: name.trim(),
+    owner: ownerTrimmed,
+    members: [ownerTrimmed],
+    entries: [],
+    createdAt: new Date().toISOString(),
+  }
   const list = [...getAccountBooks(), book]
   setAccountBooks(list)
   return book
@@ -332,6 +355,24 @@ export function updateAccountBook(id: string, partial: Partial<AccountBook>) {
 
 export function removeAccountBook(id: string) {
   setAccountBooks(getAccountBooks().filter((b) => b.id !== id))
+}
+
+export function addAccountBookMember(bookId: string, userName: string) {
+  const target = userName.trim()
+  if (!target) return
+  updateAccountBook(bookId, {
+    members: [...new Set([...((getAccountBooks().find((b) => b.id === bookId)?.members ?? [])) as string[], target])],
+  })
+}
+
+export function removeAccountBookMember(bookId: string, userName: string) {
+  const target = userName.trim()
+  if (!target) return
+  updateAccountBook(bookId, {
+    members: ((getAccountBooks().find((b) => b.id === bookId)?.members ?? []) as string[]).filter(
+      (m) => m.toLowerCase().trim() !== target.toLowerCase().trim()
+    ),
+  })
 }
 
 export function addLedgerEntry(bookId: string, entry: Omit<LedgerEntry, 'id' | 'createdAt'>): LedgerEntry {
