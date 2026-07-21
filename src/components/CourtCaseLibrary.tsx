@@ -9,10 +9,9 @@ import {
 } from '../lib/legal'
 import { hasDepartment } from '../lib/data'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { API_BASE } from '../lib/api'
 import { Panel } from './Panel'
 import { BookOpen, Bot, ExternalLink, Gavel, Pencil, RefreshCw, Save, Search, Trash2 } from '../icons'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const COURTS = ['Supreme Court', 'Federal Court', 'District Court', 'Other']
 const STATUSES: CourtStatus[] = ['Open', 'Pending', 'In Progress', 'Adjourned', 'Closed', 'Dismissed', 'Accepted', 'Unknown']

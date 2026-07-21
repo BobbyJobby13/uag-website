@@ -5,6 +5,7 @@ import { Attachments } from '../components/Attachments'
 import { Panel } from '../components/Panel'
 import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { API_BASE } from '../lib/api'
 import {
   addRequest,
   getEmployees,
@@ -72,7 +73,7 @@ export function Investigators() {
     setSummarizingId(req.id)
     try {
       const prompt = `Case subject: ${req.clientName}. Contact: ${req.contact || 'N/A'}. Status: ${req.status}. Notes: ${req.notes || 'None'}. Facts: ${req.description}. Provide a concise investigative summary including a timeline of events, key facts, persons of interest, and recommended follow-up actions. Keep it objective and factual.`
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: 'investigations', question: prompt }),

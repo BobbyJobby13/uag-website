@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Bot, Copy, ExternalLink, FileText, Send } from '../icons'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { API_BASE } from '../lib/api'
 import { hasDepartment, type Department } from '../lib/data'
-
-const apiBase = import.meta.env.VITE_API_BASE_URL
-const API_BASE = (typeof apiBase === 'string' && apiBase.startsWith('/')) ? apiBase : '/api'
 
 type Message = {
   role: 'user' | 'assistant'

@@ -4,6 +4,7 @@ import { AIAssistant } from '../components/AIAssistant'
 import { Panel } from '../components/Panel'
 import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { API_BASE } from '../lib/api'
 import {
   addAccountBook,
   addAccountBookMember,
@@ -257,10 +258,15 @@ export function Accounting() {
     return token
   }
 
+  const getWebhookBase = () => {
+    if (typeof API_BASE === 'string' && API_BASE.startsWith('http')) return API_BASE
+    return (typeof window !== 'undefined' ? window.location.origin : '') + API_BASE
+  }
+
   const getWebhookUrl = (book: AccountBook) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : ''
-    if (!book.economyWebhookToken) return `${origin}/api/economy/webhooks/${book.id}`
-    return `${origin}/api/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`
+    const base = getWebhookBase()
+    if (!book.economyWebhookToken) return `${base}/economy/webhooks/${book.id}`
+    return `${base}/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`
   }
 
   const handleOpenEconomy = (book: AccountBook) => {
@@ -292,7 +298,7 @@ export function Accounting() {
     setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Saving…' }))
     const token = ensureWebhookToken(book)
     try {
-      const res = await fetch(`/api/economy/webhooks/${book.id}/config`, {
+      const res = await fetch(`${API_BASE}/economy/webhooks/${book.id}/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, secret, masterToken: masterToken.trim() }),
@@ -316,7 +322,7 @@ export function Accounting() {
     }
     setEconomyStatus((prev) => ({ ...prev, [book.id]: 'Syncing…' }))
     try {
-      const res = await fetch(`/api/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`)
+      const res = await fetch(`${API_BASE}/economy/webhooks/${book.id}?token=${book.economyWebhookToken}`)
       const data = await res.json()
       if (!res.ok) {
         setEconomyStatus((prev) => ({ ...prev, [book.id]: data.error || 'Sync failed' }))

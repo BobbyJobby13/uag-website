@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { API_BASE } from '../lib/api'
 import { Bot, MessageCircle, Send } from '../icons'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 type Message = {
   role: 'user' | 'assistant'

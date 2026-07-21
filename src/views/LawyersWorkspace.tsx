@@ -5,6 +5,7 @@ import { Attachments } from '../components/Attachments'
 import { Panel } from '../components/Panel'
 import { ServiceRequestForm } from '../components/ServiceRequestForm'
 import { useDiscordAuth } from '../context/DiscordAuth'
+import { API_BASE } from '../lib/api'
 import {
   addRequest,
   getEmployees,
@@ -72,7 +73,7 @@ export function Lawyers() {
     setGeneratingId(req.id)
     try {
       const prompt = `Client: ${req.clientName}. Contact: ${req.contact || 'N/A'}. Status: ${req.status}. Notes: ${req.notes || 'None'}. Facts: ${req.description}. Create a complete legal case file: summary of facts, claims/issues, applicable legal strategy, recommended next steps, and a draft memo. Keep it concise and professional.`
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: 'legal', question: prompt }),
